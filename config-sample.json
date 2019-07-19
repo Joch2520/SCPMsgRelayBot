@@ -1,0 +1,20 @@
+{
+  "prefix": "//",
+  "loginDQ": "YourLoginToken",
+  "ReadDiscord": [
+     {
+      "ServKey": ["Server Name 1","server id 1"],
+      "ChanName": ["channel name 1","channel name 2"],
+      "ChanID": ["channel id 1","channel name 2"]
+    },
+    {
+     "ServKey": ["Server Name 2","server id 2"],
+     "ChanName": ["channel name 1","channel name 2"],
+     "ChanID": ["channel id 1","channel name 2"]
+   }
+  ],
+  "ReadQQ": {
+    "GPID": ["qq group id 1","qq group id 2"],
+    "GPName": ["qq group name 1","qq group name 2"]
+  }
+}
