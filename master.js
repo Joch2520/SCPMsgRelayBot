@@ -10,8 +10,9 @@ client.on('ready', () => {
   console.log(`Discord logged in as ${client.user.tag}.`);
 });
 
-client.login(config.loginDQ);
+client.login(config.loginDiscord);
 
+// it's of no use right now, but perhaps will be later.
 fs.readdir("./events/", (err, files) => {
   if(err) return console.error(err);
   files.forEach(file => {
@@ -22,13 +23,14 @@ fs.readdir("./events/", (err, files) => {
   });
 });
 
+
 //this reads message from specific Discord channels
 client.on('message', msg => {
   if(msg.author.bot) return;
   for (var i in config.ReadDiscord) {
     if ((config.ReadDiscord[i].ServKey.includes(msg.guild.id,1))&&(config.ReadDiscord[i].ChanID.includes(msg.channel.id))) {
       var j = config.ReadDiscord[i].ChanID.indexOf(msg.channel.id);
-      console.log('<'+msg.member.displayName+' @'+config.ReadDiscord[i].ServKey[0]+' #'+config.ReadDiscord[i].ChanName[j]+'>: '+msg.content);
+      console.log('<'+msg.member.displayName+'('+msg.author.tag+') @'+config.ReadDiscord[i].ServKey[0]+' #'+config.ReadDiscord[i].ChanName[j]+'>: '+msg.content);
     }
   }
 });
@@ -36,7 +38,7 @@ client.on('message', msg => {
 //commands
 client.on("message", msg => {
   if (msg.author.bot) return;
-  if (!msg.content.startsWith(pref)) return;
+  if (!msg.content.toLowerCase().startsWith(pref)) return;
   let args = msg.content.slice(pref.length).split(' ');
   if (args[0]==='') { args.shift(); };
   let cmd = args[0].toLowerCase();
