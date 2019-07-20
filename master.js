@@ -10,7 +10,11 @@ var pref = config.prefix.toLowerCase();
 client.login(config.loginDiscord);
 
 // it's of no use right now, but perhaps will be later.
+<<<<<<< HEAD
 fs.readdir("./events/Discord", (err, files) => {
+=======
+fs.readdir("./events/", (err, files) => {
+>>>>>>> 511e7616118234e6b19d77c042b0e0ccbf41c130
   if(err) return console.error(err);
   files.forEach(file => {
     let eventFunction = require(`./events/Discord/${file}`);
