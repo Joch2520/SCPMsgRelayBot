@@ -7,9 +7,10 @@
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
-  "author": "Jochoi (Joch#6879)",
+  "author": "Jochoi (Discord: Joch#6879) (QQ: 2502425837)",
   "license": "ISC",
   "dependencies": {
-    "discord.js": "^11.5.1"
+    "discord.js": "^11.5.1",
+    "express": "^4.16.0"
   }
 }

@@ -1,6 +1,7 @@
 const Discord = require('discord.js');
 const client = new Discord.Client({ autoReconnect: true });
 const fs = require("fs");
+var CQserver = require('./CQserver');
 
 let config = JSON.parse(fs.readFileSync('./config.json', 'utf8'));
 var pref = config.prefix.toLowerCase();
