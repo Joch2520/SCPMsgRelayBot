@@ -13,4 +13,5 @@
     res.end();
   })
   app.listen(3000);
+  console.log('Listening from localhost:3000');
 }).call(this);
