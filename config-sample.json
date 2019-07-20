@@ -1,6 +1,7 @@
 {
   "prefix": "//",
-  "loginDQ": "YourLoginToken",
+  "loginDiscord": "YourLoginToken",
+  "loginQQ": "YourLoginToken",
   "ReadDiscord": [
      {
       "ServKey": ["Server Name 1","server id 1"],
