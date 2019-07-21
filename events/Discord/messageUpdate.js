@@ -30,7 +30,7 @@ exports.run = (client, oldMsg, newMsg) => {
     CQMsg.message = '<'+newMsg.member.displayName+'>: '+newMsg.content;
     var URLReq = '/send_group_message?json=' + encodeURI(JSON.stringify(CQMsg));
     app.get(URLReq, (req, res) => {
-      setMsgMap.run({DisMsgID:DisMsg.channel.id, QQMsgID:req.body.message_id});
+      setMsgMap.run({DisMsgID:newMsg.id, QQMsgID:req.body.message_id});
     })
   };
 }

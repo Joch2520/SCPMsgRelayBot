@@ -26,7 +26,7 @@ exports.run = (app, DisMsg) => {
       CQMsg.message = '<'+DisMsg.member.displayName+'>: '+DisMsg.content;
       var URLReq = '/send_group_message?json=' + encodeURI(JSON.stringify(CQMsg))
       app.get(URLReq, (req, res) => {
-        setMsgMap.run({DisMsgID:DisMsg.channel.id, QQMsgID:req.body.message_id});
+        setMsgMap.run({DisMsgID:DisMsg.id, QQMsgID:req.body.message_id});
       });
     }
   };
