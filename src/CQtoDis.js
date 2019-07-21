@@ -2,12 +2,20 @@ exports.run = (client) => {
   const fs = require("fs");
   const path = require("path");
   const express = require('express');
-  let chanMap = JSON.parse(fs.readFileSync('./channelMapping.json', 'utf8'));
+  const SQLite = require('better-sqlite3');
+  const MsgMap = new SQLite('./../data/MsgMappings.sqlite');
+  let chanMap = JSON.parse(fs.readFileSync(path.join(__dirname, '../data/channelMapping.json'), 'utf8'));
 
-  let MsgIDs = JSON.parse(fs.readFileSync(path.join(__dirname, '../data/MsgIDs.json'), 'utf8'));
-/*  const bodyParser = require('body-parser');
- *  no longer needed as the required methods comes bundled with express 4.16 onwards.
- */
+  const CQtoDis = MsgMap.prepare("SELECT count(*) FROM sqlite_master WHERE type='table' AND name = 'CQtoDis';").get();
+  if (!CQtoDis['count(*)']) {
+    // If the table isn't there, create it and setup the database correctly.
+    MsgMap.prepare("CREATE TABLE CQtoDis (QQMsgID TEXT PRIMARY KEY, DisMsgID TEXT);").run();
+    MsgMap.pragma("synchronous = 1");
+    MsgMap.pragma("journal_mode = wal");
+  };
+
+  let setMsgMap = MsgMap.prepare("INSERT OR REPLACE INTO CQtoDis (QQMsgID, DisMsgID) VALUES (@QQMsgID, @DisMsgID);");
+
   const app = express();
 
   app.use(express.urlencoded({extended:false}));
@@ -23,7 +31,7 @@ exports.run = (client) => {
         if (req.body.group_id === chanMap.QQGPID[i]) {
           client.channels.get(chanMap.DisChanID[i]).send('<['+req.body.sender.title+']'+req.body.sender.card+'>: '+req.body.message)
             .then(message => {
-              MsgIDs.CQtoDis[req.body.message_id] = message.channel.id;
+              setMsgMap.run({QQMsgID:req.body.message_id, DisMsgID:message.id});
             });
         }
       };

@@ -1,4 +1,4 @@
-exports.run = (app, DisMsg) => {
+exports.run = (client, oldMsg, newMsg) => {
   const fs = require("fs");
   const path = require("path");
   const express = require('express');
@@ -16,18 +16,21 @@ exports.run = (app, DisMsg) => {
 
   let setMsgMap = MsgMap.prepare("INSERT OR REPLACE INTO DisToCQ (DisMsgID, QQMsgID) VALUES (@DisMsgID, @QQMsgID);");
 
+  const app = express();
   app.use(express.urlencoded({extended:false}));
   app.use(express.json());
 
-  for (var i in chanMap.DisChanID) {
-    if ( DisMsg.channel.id === chanMap.DisChanID[i]) {
-      var CQMsg = { "group_id":"", "message":"" }
-      CQMsg.group_id = chanMap.QQGPID[i];
-      CQMsg.message = '<'+DisMsg.member.displayName+'>: '+DisMsg.content;
-      var URLReq = '/send_group_message?json=' + encodeURI(JSON.stringify(CQMsg))
-      app.get(URLReq, (req, res) => {
-        setMsgMap.run({DisMsgID:DisMsg.channel.id, QQMsgID:req.body.message_id});
-      });
-    }
+  let QQMsgID = MsgMap.run('SELECT QQMsgID FROM DisToCQ WHERE DisMsgID = ?', oldMsg.id);
+  if (QQMsgID) {
+    var deleted = {"message_id":""};
+    deleted.message_id = QQMsgID;
+    app.get('/delete_msg?json='+encodeURI(JSON.stringify(deleted)));
+    var CQMsg = { "group_id":"", "message":"" }
+    CQMsg.group_id = chanMap.QQGPID[i];
+    CQMsg.message = '<'+newMsg.member.displayName+'>: '+newMsg.content;
+    var URLReq = '/send_group_message?json=' + encodeURI(JSON.stringify(CQMsg));
+    app.get(URLReq, (req, res) => {
+      setMsgMap.run({DisMsgID:DisMsg.channel.id, QQMsgID:req.body.message_id});
+    })
   };
 }

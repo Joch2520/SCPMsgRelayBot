@@ -9,7 +9,6 @@ app.listen(3001);
 console.log('Posting Discord messages to localhost:3001');
 
 let config = JSON.parse(fs.readFileSync('./config.json', 'utf8'));
-//let chanMap = JSON.parse(fs.readFileSync('./channelMapping.json', 'utf8'));
 
 var pref = config.prefix.toLowerCase();
 // add bot to server: discordapp.com/oauth2/authorize?client_id=601680932860067861&scope=bot&permissions=240640
