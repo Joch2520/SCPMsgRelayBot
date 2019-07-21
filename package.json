@@ -5,6 +5,7 @@
   "main": "master.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "node master.js"
   },
   "keywords": [],
   "author": "Jochoi (Discord: Joch#6879) (QQ: 2502425837)",
