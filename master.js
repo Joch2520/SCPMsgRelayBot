@@ -35,7 +35,7 @@ client.on('message', msg => {
   if (msg.content.toLowerCase().startsWith(pref)) return;
   for (var i in config.ReadDiscord) {
     if ((config.ReadDiscord[i].ServKey.includes(msg.guild.id,1))&&(config.ReadDiscord[i].ChanID.includes(msg.channel.id))) {
-      var j = config.ReadDiscord[i].ChanID.indexOf(msg.channel.id);
+      //var j = config.ReadDiscord[i].ChanID.indexOf(msg.channel.id);
       //console.log('<'+msg.member.displayName+'('+msg.author.tag+') @'+config.ReadDiscord[i].ServKey[0]+' #'+config.ReadDiscord[i].ChanName[j]+'>: '+msg.content);
       DisToCQ.run(app, msg)
     }
@@ -54,5 +54,7 @@ client.on("message", msg => {
   try {
     cmdFile = require(`./commands/${cmd}.js`);
     cmdFile.run(client, msg, args);
-  } catch (e) { console.log(e) };
+  } catch (e) {
+    if (e.code !== 'MODULE_NOT_FOUND') { console.log(e); }
+  };
 });
