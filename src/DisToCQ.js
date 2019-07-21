@@ -1,11 +1,7 @@
-exports.run = (DisMsg) => {
+exports.run = (app, DisMsg) => {
   const express = require('express');
   const fs = require("fs");
-  const app = express();
   let chanMap = JSON.parse(fs.readFileSync('./channelMapping.json', 'utf8'));
-
-  app.listen(3001);
-  console.log('Posting Discord messages to localhost:3001');
 
   app.use(express.urlencoded({extended:false}));
   app.use(express.json());
