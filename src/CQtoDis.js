@@ -8,7 +8,7 @@ exports.run = (client) => {
   const app = express();
 
   app.use(express.urlencoded({extended:false}));
-  app.use(express.json())
+  app.use(express.json());
 
   app.listen(3000);
   console.log('Listening from CoolQ at localhost:3000');

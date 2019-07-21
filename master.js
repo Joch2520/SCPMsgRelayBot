@@ -1,8 +1,8 @@
 const Discord = require('discord.js');
 const client = new Discord.Client({ autoReconnect: true });
 const fs = require("fs");
-var RetrieveDis = require('./src/RetrieveDis')
-var ServerInit = require('./src/ServerInit');
+var DisToCQ = require('./src/DisToCQ')
+// var ServerInit = require('./src/ServerInit');
 
 let config = JSON.parse(fs.readFileSync('./config.json', 'utf8'));
 let chanMap = JSON.parse(fs.readFileSync('./channelMapping.json', 'utf8'));
@@ -31,8 +31,8 @@ client.on('message', msg => {
   for (var i in config.ReadDiscord) {
     if ((config.ReadDiscord[i].ServKey.includes(msg.guild.id,1))&&(config.ReadDiscord[i].ChanID.includes(msg.channel.id))) {
       var j = config.ReadDiscord[i].ChanID.indexOf(msg.channel.id);
-      console.log('<'+msg.member.displayName+'('+msg.author.tag+') @'+config.ReadDiscord[i].ServKey[0]+' #'+config.ReadDiscord[i].ChanName[j]+'>: '+msg.content);
-      RetrieveDis.run(i,j,)
+      //console.log('<'+msg.member.displayName+'('+msg.author.tag+') @'+config.ReadDiscord[i].ServKey[0]+' #'+config.ReadDiscord[i].ChanName[j]+'>: '+msg.content);
+      DisToCQ.run(msg)
     }
   }
 });
