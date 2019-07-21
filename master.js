@@ -32,6 +32,7 @@ fs.readdir("./events/Discord", (err, files) => {
 //this reads message from specific Discord channels
 client.on('message', msg => {
   if(msg.author.bot) return;
+  if (msg.content.toLowerCase().startsWith(pref)) return;
   for (var i in config.ReadDiscord) {
     if ((config.ReadDiscord[i].ServKey.includes(msg.guild.id,1))&&(config.ReadDiscord[i].ChanID.includes(msg.channel.id))) {
       var j = config.ReadDiscord[i].ChanID.indexOf(msg.channel.id);
@@ -49,7 +50,9 @@ client.on("message", msg => {
   if (args[0]==='') { args.shift(); };
   let cmd = args[0].toLowerCase();
   args.shift();
-
-  let cmdFile = require(`./commands/${cmd}.js`);
-  cmdFile.run(client, msg, args);
+  var cmdFile;
+  try {
+    cmdFile = require(`./commands/${cmd}.js`);
+    cmdFile.run(client, msg, args);
+  } catch (e) { console.log(e) };
 });
