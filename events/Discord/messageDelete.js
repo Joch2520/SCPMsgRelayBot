@@ -3,7 +3,7 @@ exports.run = (client, msg) => {
   const path = require("path");
   const app = require('express');
   const SQLite = require('better-sqlite3');
-  const MsgMap = new SQLite('./../data/MsgMappings.sqlite');
+  const MsgMap = new SQLite(path.join(__dirname,'../../data/MsgMappings.sqlite'));
   let pref = JSON.parse(fs.readFileSync('./config.json', 'utf8')).prefix.toLowerCase();
 
   if (msg.content.toLowerCase().startsWith(pref)) return;

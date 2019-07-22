@@ -3,16 +3,12 @@ exports.run = (client, oldMsg, newMsg) => {
   const path = require("path");
   const express = require('express');
   const SQLite = require('better-sqlite3');
-  const MsgMap = new SQLite('./../data/MsgMappings.sqlite');
+  const MsgMap = new SQLite(path.join(__dirname,'../../data/MsgMappings.sqlite'));
   let chanMap = JSON.parse(fs.readFileSync(path.join(__dirname, '../data/channelMapping.json'), 'utf8'));
 
-  const DisToCQ = MsgMap.prepare("SELECT count(*) FROM sqlite_master WHERE type='table' AND name = 'DisToCQ';").get();
-  if (!DisToCQ['count(*)']) {
-    // If the table isn't there, create it and setup the database correctly.
-    MsgMap.prepare("CREATE TABLE DisToCQ (DisMsgID TEXT PRIMARY KEY, QQMsgID TEXT);").run();
-    MsgMap.pragma("synchronous = 1");
-    MsgMap.pragma("journal_mode = wal");
-  };
+  MsgMap.prepare("CREATE TABLE IF NOT EXISTS DisToCQ (DisMsgID TEXT PRIMARY KEY, QQMsgID TEXT);").run();
+  MsgMap.pragma("synchronous = 1");
+  MsgMap.pragma("journal_mode = wal");
 
   let setMsgMap = MsgMap.prepare("INSERT OR REPLACE INTO DisToCQ (DisMsgID, QQMsgID) VALUES (@DisMsgID, @QQMsgID);");
 
