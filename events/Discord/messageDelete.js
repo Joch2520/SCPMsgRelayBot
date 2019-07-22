@@ -7,7 +7,7 @@ exports.run = (client, msg) => {
   let pref = JSON.parse(fs.readFileSync('./config.json', 'utf8')).prefix.toLowerCase();
 
   if (msg.content.toLowerCase().startsWith(pref)) return;
-  let QQMsgID = MsgMap.run('SELECT QQMsgID FROM DisToCQ WHERE DisMsgID = ?', msg.id);
+  let QQMsgID = MsgMap.prepare('SELECT QQMsgID FROM DisToCQ WHERE DisMsgID = ?').get(msg.id);
   if (QQMsgID) {
     var deleted = {"message_id":""};
     deleted.message_id = QQMsgID;

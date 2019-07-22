@@ -16,7 +16,7 @@ exports.run = (client, oldMsg, newMsg) => {
   app.use(express.urlencoded({extended:false}));
   app.use(express.json());
 
-  let QQMsgID = MsgMap.run('SELECT QQMsgID FROM DisToCQ WHERE DisMsgID = ?', oldMsg.id);
+  let QQMsgID = MsgMap.prepare('SELECT QQMsgID FROM DisToCQ WHERE DisMsgID = ?').get(oldMsg.id);
   if (QQMsgID) {
     var deleted = {"message_id":""};
     deleted.message_id = QQMsgID;
