@@ -29,8 +29,9 @@ fs.readdir("./events/Discord", (err, files) => {
 
 //this reads message from specific Discord channels
 client.on('message', msg => {
-  if(msg.author.bot) return;
+  if (msg.author.bot) return;
   if (msg.content.toLowerCase().startsWith(pref)) return;
+  if (msg.system) return;
   for (var i in config.ReadDiscord) {
     if ((config.ReadDiscord[i].ServKey.includes(msg.guild.id,1))&&(config.ReadDiscord[i].ChanID.includes(msg.channel.id))) {
       //var j = config.ReadDiscord[i].ChanID.indexOf(msg.channel.id);
