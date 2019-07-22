@@ -4,7 +4,7 @@ exports.run = (client, oldMsg, newMsg) => {
   const express = require('express');
   const SQLite = require('better-sqlite3');
   const MsgMap = new SQLite(path.join(__dirname,'../../data/MsgMappings.sqlite'));
-  let chanMap = JSON.parse(fs.readFileSync(path.join(__dirname, '../data/channelMapping.json'), 'utf8'));
+  let chanMap = JSON.parse(fs.readFileSync(path.join(__dirname, '../../data/channelMapping.json'), 'utf8'));
 
   MsgMap.prepare("CREATE TABLE IF NOT EXISTS DisToCQ (DisMsgID TEXT PRIMARY KEY, QQMsgID TEXT);").run();
   MsgMap.pragma("synchronous = 1");

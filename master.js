@@ -16,13 +16,12 @@ var pref = config.prefix.toLowerCase();
 
 client.login(config.loginDiscord);
 
-// it's of no use right now, but perhaps will be later.
+// calling functions for events
 fs.readdir("./events/Discord", (err, files) => {
   if(err) return console.error(err);
   files.forEach(file => {
     let eventFunction = require(`./events/Discord/${file}`);
     let eventName = file.split(".")[0];
-    // super-secret recipe to call events with all their proper arguments *after* the `client` var.
     client.on(eventName, (...args) => eventFunction.run(client, ...args));
   });
 });
