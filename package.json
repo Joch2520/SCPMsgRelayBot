@@ -1,6 +1,6 @@
 {
   "name": "DiscordQQRelayBot",
-  "version": "1.0.0",
+  "version": "0.0.1",
   "description": "",
   "main": "master.js",
   "scripts": {
@@ -8,7 +8,7 @@
     "start": "node master.js"
   },
   "keywords": [],
-  "author": "Jochoi (Discord: Joch#6879) (QQ: 2502425837)",
+  "author": "Joch2520 (Discord: Joch#6879) (QQ: 2502425837)",
   "license": "ISC",
   "dependencies": {
     "better-sqlite3": "^5.4.1",
