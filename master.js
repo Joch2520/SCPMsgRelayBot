@@ -5,8 +5,8 @@ var DisToCQ = require('./src/DisToCQ')
 // var ServerInit = require('./src/ServerInit');
 const express = require('express');
 const app = express();
-app.listen(3001);
-console.log('Posting Discord messages to localhost:3001');
+app.listen(7501);
+console.log('Posting Discord messages to localhost:7501');
 
 let config = JSON.parse(fs.readFileSync('./config.json', 'utf8'));
 

@@ -17,20 +17,24 @@ exports.run = (client) => {
   app.use(express.urlencoded({extended:false}));
   app.use(express.json());
 
-  app.listen(3000);
-  console.log('Listening from CoolQ at localhost:3000');
+  app.listen(7500);
+  console.log('Listening from CoolQ at localhost:7500');
 
   app.post('/', (req, res) => {
-    console.log(req.body);
-    if ((req.body.post_type === 'message') && (req.body.message_type === 'group')) {
-      for (var i in chanMap.QQGPID) {
-        if (req.body.group_id === chanMap.QQGPID[i]) {
-          client.channels.get(chanMap.DisChanID[i]).send('<['+req.body.sender.title+']'+req.body.sender.card+'>: '+req.body.message)
-            .then(message => {
-              setMsgMap.run({QQMsgID:req.body.message_id, DisMsgID:message.id});
-            });
-        }
-      };
+    //for debugging:
+    /*console.log(req.body);
+    console.log('<['+req.body.sender.title+']'+req.body.sender.card+'@'+req.body.group_id+'>: '+req.body.message);
+    var debug = '';
+    if((req.body.message_type === 'group')) {debug+=1} else {debug+=0}
+    if(chanMap.QQGPID.includes(req.body.group_id.toString(10))) {debug+=1} else {debug+=0}
+    if((req.body.post_type === 'message') ) {debug+=1} else {debug+=0}
+    console.log(debug)*/
+    //actual sending to discord
+    if ((req.body.message_type === 'group') && (chanMap.QQGPID.includes(req.body.group_id.toString(10))) && (req.body.post_type === 'message')) {
+      client.channels.get(chanMap.DisChanID[chanMap.QQGPID.indexOf(req.body.group_id.toString(10))]).send('<['+req.body.sender.title+']'+req.body.sender.card+'>: '+req.body.message)
+        .then(message => {
+          setMsgMap.run({QQMsgID:req.body.message_id, DisMsgID:message.id});
+        });
     };
     res.end();
   })

@@ -1,7 +1,7 @@
 exports.run = (app, DisMsg) => {
   const fs = require("fs");
   const path = require("path");
-  const express = require('express');
+  const request = require('request');
   const SQLite = require('better-sqlite3');
   const MsgMap = new SQLite(path.join(__dirname,'../data/MsgMappings.sqlite'));
   let chanMap = JSON.parse(fs.readFileSync(path.join(__dirname, '../data/channelMapping.json'), 'utf8'));
@@ -12,18 +12,20 @@ exports.run = (app, DisMsg) => {
 
   let setMsgMap = MsgMap.prepare("INSERT OR REPLACE INTO DisToCQ (DisMsgID, QQMsgID) VALUES (@DisMsgID, @QQMsgID);");
 
-  app.use(express.urlencoded({extended:false}));
-  app.use(express.json());
+  if (chanMap.DisChanID.includes(DisMsg.channel.id)) {
+    var CQMsg = { "group_id":"", "message":"" }
+    CQMsg.group_id = chanMap.QQGPID[chanMap.DisChanID.indexOf(DisMsg.channel.id)].toString(10);
+    CQMsg.message = '<'+DisMsg.member.displayName+'>: '+DisMsg.content;
+    var options = {
+      uri: 'http://127.0.0.1:7501/send_group_message',
+      method: 'POST',
+      json: CQMsg
+    };
 
-  for (var i in chanMap.DisChanID) {
-    if ( DisMsg.channel.id === chanMap.DisChanID[i]) {
-      var CQMsg = { "group_id":"", "message":"" }
-      CQMsg.group_id = chanMap.QQGPID[i];
-      CQMsg.message = '<'+DisMsg.member.displayName+'>: '+DisMsg.content;
-      var URLReq = '/send_group_message?json=' + encodeURI(JSON.stringify(CQMsg))
-      app.get(URLReq, (req, res) => {
-        setMsgMap.run({DisMsgID:DisMsg.id, QQMsgID:req.body.message_id});
-      });
-    }
-  };
+    request(options, function (error, response, body) {
+      if (!error && response.statusCode == 200) {
+        setMsgMap.run({DisMsgID:DisMsg.id, QQMsgID:body.message_id});
+      }
+    });
+  }
 }
