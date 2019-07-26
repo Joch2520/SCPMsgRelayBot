@@ -3,9 +3,6 @@ const client = new Discord.Client({ autoReconnect: true });
 const fs = require("fs");
 var DisToCQ = require('./src/DisToCQ')
 // var ServerInit = require('./src/ServerInit');
-const express = require('express');
-const app = express();
-app.listen(7501);
 console.log('Posting Discord messages to localhost:7501');
 
 let config = JSON.parse(fs.readFileSync('./config.json', 'utf8'));
@@ -36,7 +33,7 @@ client.on('message', msg => {
     if ((config.ReadDiscord[i].ServKey.includes(msg.guild.id,1))&&(config.ReadDiscord[i].ChanID.includes(msg.channel.id))) {
       //var j = config.ReadDiscord[i].ChanID.indexOf(msg.channel.id);
       //console.log('<'+msg.member.displayName+'('+msg.author.tag+') @'+config.ReadDiscord[i].ServKey[0]+' #'+config.ReadDiscord[i].ChanName[j]+'>: '+msg.content);
-      DisToCQ.run(app, msg)
+      DisToCQ.run(msg)
     }
   }
 });

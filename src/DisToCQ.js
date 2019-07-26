@@ -1,4 +1,4 @@
-exports.run = (app, DisMsg) => {
+exports.run = (DisMsg) => {
   const fs = require("fs");
   const path = require("path");
   const request = require('request');
