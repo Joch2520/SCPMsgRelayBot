@@ -3,6 +3,7 @@
 /data/
 /CoolQ Air/conf/
 /CoolQ Air/data/app/*/log/
+/CoolQ Air/data/
 config.json
 /src/channelMapping.json
 /src/chanMapArc*.json

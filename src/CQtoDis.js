@@ -7,6 +7,7 @@ exports.run = (client) => {
   let chanMap = JSON.parse(fs.readFileSync(path.join(__dirname, '../data/channelMapping.json'), 'utf8'));
 
   MsgMap.prepare("CREATE TABLE IF NOT EXISTS CQtoDis (QQMsgID TEXT PRIMARY KEY, DisMsgID TEXT);").run();
+  MsgMap.prepare("CREATE TABLE IF NOT EXISTS DisToCQ (DisMsgID TEXT PRIMARY KEY, QQMsgID TEXT);").run();
   MsgMap.pragma("synchronous = 1");
   MsgMap.pragma("journal_mode = wal");
 

@@ -1,7 +1,7 @@
 exports.run = (client, msg) => {
   const fs = require("fs");
   const path = require("path");
-  const app = require('express');
+  const request = require('request');
   const SQLite = require('better-sqlite3');
   const MsgMap = new SQLite(path.join(__dirname,'../../data/MsgMappings.sqlite'));
   let pref = JSON.parse(fs.readFileSync(path.join(__dirname,'../../config.json'), 'utf8')).prefix.toLowerCase();
@@ -11,7 +11,16 @@ exports.run = (client, msg) => {
   if (QQMsgID) {
     var deleted = {"message_id":""};
     deleted.message_id = QQMsgID;
-    app.get('/delete_msg?json='+encodeURI(JSON.stringify(deleted)));
-    MsgMap.run('DELETE FROM DisToCQ WHERE DisMsgID = ?', msg.id);
+    var options = {
+      uri: 'http://127.0.0.1:7501/delete_message',
+      method: 'POST',
+      json: deleted
+    };
+
+    request(options, function (error, response, body) {
+      if (!error && response.statusCode == 200) {
+      MsgMap.run('DELETE FROM DisToCQ WHERE DisMsgID = ?', msg.id);
+      }
+    });
   }
 }
