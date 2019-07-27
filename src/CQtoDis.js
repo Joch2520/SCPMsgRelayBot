@@ -32,7 +32,27 @@ exports.run = (client) => {
     console.log(debug)*/
     //actual sending to discord
     if ((req.body.message_type === 'group') && (chanMap.QQGPID.includes(req.body.group_id.toString(10))) && (req.body.post_type === 'message')) {
-      client.channels.get(chanMap.DisChanID[chanMap.QQGPID.indexOf(req.body.group_id.toString(10))]).send('<['+req.body.sender.title+']'+req.body.sender.card+'>: '+req.body.message)
+      var transName = '<';
+      if (req.body.sender.title) { transName += '['+req.body.sender.title+']'}
+      if (req.body.sender.card) { transName += req.body.sender.card }
+        else if (req.body.sender.nickname) { transName += req.body.sender.nickname }
+          else if (req.body.sender.user_id) { transName += req.body.sender.user_id };
+      transName += '>';
+      var transMsg = '';
+      for (var i = 0; i < req.body.message.length; i++) {
+        var curr = req.body.message[i];
+        switch (curr.type) {
+          case 'text': transMsg += curr.data.text + ' '; break;
+          case 'image': transMsg += curr.data.url + ' '; break;
+          case 'at': transMsg += '@'+ curr.data.qq + ' '; break;
+          case 'share': transMsg += curr.data.url + ' '; break;
+          case 'face': transMsg += 'FaceID:' + curr.data.id + ' '; break;
+          case 'emoji': transMsg += 'EmojiID:' + curr.data.id + ' '; break;
+          case 'image': transMsg += curr.data.url + ' '; break;
+          default: transMsg += curr + ' '; break;
+        }
+      }
+      client.channels.get(chanMap.DisChanID[chanMap.QQGPID.indexOf(req.body.group_id.toString(10))]).send(transName + ': ' + transMsg)
         .then(message => {
           setMsgMap.run({QQMsgID:req.body.message_id, DisMsgID:message.id});
         });

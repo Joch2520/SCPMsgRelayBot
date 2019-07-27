@@ -1,4 +1,5 @@
 {
+  "general": {
     "host": "127.0.0.1",
     "port": 7501,
     "use_http": true,
@@ -14,12 +15,14 @@
     "post_url": "http://127.0.0.1:7500",
     "access_token": "",
     "secret": "",
-    "post_message_format": "string",
+    "post_message_format": "array",
     "serve_data_files": false,
     "update_source": "github",
     "update_channel": "stable",
     "auto_check_update": false,
     "auto_perform_update": false,
     "show_log_console": true,
-    "log_level": "info"
+    "log_level": "info",
+    "event_filter": "filter.json"
+  }
 }

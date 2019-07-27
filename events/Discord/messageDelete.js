@@ -12,14 +12,14 @@ exports.run = (client, msg) => {
     var deleted = {"message_id":""};
     deleted.message_id = QQMsgID;
     var options = {
-      uri: 'http://127.0.0.1:7501/delete_message',
+      uri: 'http://127.0.0.1:7501/delete_msg',
       method: 'POST',
       json: deleted
     };
 
     request(options, function (error, response, body) {
       if (!error && response.statusCode == 200) {
-      MsgMap.run('DELETE FROM DisToCQ WHERE DisMsgID = ?', msg.id);
+      MsgMap.prepare('DELETE FROM DisToCQ WHERE DisMsgID = ?').get(msg.id);
       }
     });
   }

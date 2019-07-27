@@ -20,22 +20,22 @@ exports.run = (client, oldMsg, newMsg) => {
     CQMsg.group_id = chanMap.QQGPID[i];
     CQMsg.message = '<'+newMsg.member.displayName+'>: '+newMsg.content;
     var delOptions = {
-      uri: 'http://127.0.0.1:7501/delete_message',
+      uri: 'http://127.0.0.1:7501/delete_msg',
       method: 'POST',
       json: deleted
     };
 
-    request(delOptions, function (error, response, body) {
-      if (!error && response.statusCode == 200) {
-        var options = {
-          uri: 'http://127.0.0.1:7501/send_group_message',
+    request(delOptions, function (error1, response1, body1) {
+      if (!error1 && response1.statusCode == 200) {
+        var sendOptions = {
+          uri: 'http://127.0.0.1:7501/send_group_msg',
           method: 'POST',
           json: CQMsg
         };
 
-        request(options, function (error, response, body) {
-          if (!error && response.statusCode == 200) {
-            setMsgMap.run({DisMsgID:newMsg.id, QQMsgID:body.message_id});
+        request(sendOptions, function (error2, response2, body2) {
+          if (!error2 && response2.statusCode == 200) {
+            setMsgMap.run({DisMsgID:newMsg.id, QQMsgID:body2.message_id});
           }
         });
       }
