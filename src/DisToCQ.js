@@ -23,7 +23,11 @@ exports.run = (DisMsg) => {
 
     request(options, function (error, response, body) {
       if (!error && response.statusCode == 200) {
-        setMsgMap.run({DisMsgID:DisMsg.id, QQMsgID:body.message_id});
+        /*var debug = JSON.stringify({DisMsgID:DisMsg.id, QQMsgID:body.data.message_id})
+        console.log(JSON.stringify(response));
+        console.log(JSON.stringify(body));
+        console.log(debug);*/
+        setMsgMap.run({DisMsgID:DisMsg.id, QQMsgID:body.data.message_id.toString(10)});
       }
     });
   }

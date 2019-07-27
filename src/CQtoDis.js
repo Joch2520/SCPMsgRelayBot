@@ -3,6 +3,7 @@ exports.run = (client) => {
   const path = require("path");
   const express = require('express');
   const SQLite = require('better-sqlite3');
+  const Discord = require('discord.js');
   const MsgMap = new SQLite(path.join(__dirname,'../data/MsgMappings.sqlite'));
   let chanMap = JSON.parse(fs.readFileSync(path.join(__dirname, '../data/channelMapping.json'), 'utf8'));
 
@@ -36,26 +37,63 @@ exports.run = (client) => {
       if (req.body.sender.title) { transName += '['+req.body.sender.title+']'}
       if (req.body.sender.card) { transName += req.body.sender.card }
         else if (req.body.sender.nickname) { transName += req.body.sender.nickname }
-          else if (req.body.sender.user_id) { transName += req.body.sender.user_id };
+      transName += ' (' + req.body.sender.user_id + ')';
       transName += '>';
       var transMsg = '';
+      var files = [];
+      var shareEmbed;
       for (var i = 0; i < req.body.message.length; i++) {
         var curr = req.body.message[i];
         switch (curr.type) {
           case 'text': transMsg += curr.data.text + ' '; break;
           case 'image': transMsg += curr.data.url + ' '; break;
           case 'at': transMsg += '@'+ curr.data.qq + ' '; break;
-          case 'share': transMsg += curr.data.url + ' '; break;
           case 'face': transMsg += 'FaceID:' + curr.data.id + ' '; break;
           case 'emoji': transMsg += 'EmojiID:' + curr.data.id + ' '; break;
           case 'image': transMsg += curr.data.url + ' '; break;
+          case 'music': switch (curr.data.type) {
+            /*case 'qq': shareEmbed = {
+              color: 0xFF9900,
+              title: curr.data.title,
+              url: 'http://y.qq.com'+ curr.data.id,
+              description: curr.data.content,
+              thumbnail: { url: curr.data.image }
+            }; break;
+            case '163':    ; break;
+            case 'xiami':    ; break;*/
+            case 'custom': shareEmbed = {
+              color: 0xFF9900,
+              title: curr.data.title,
+              url: curr.data.url,
+              description: curr.data.content,
+              thumbnail: { url: curr.data.image },
+              fields: [{ name: "Song", value: curr.data.audio }]
+            }; break;
+            default: transMsg += curr + ' '; break;
+          }; break;
+          case 'share': shareEmbed = {
+            color: 0x0099FF,
+            title: curr.data.title,
+            url: curr.data.url,
+            description: curr.data.content,
+            thumbnail: { url: curr.data.image }
+          }; break;
+          case 'rich': shareEmbed = curr.data; break;
           default: transMsg += curr + ' '; break;
         }
       }
-      client.channels.get(chanMap.DisChanID[chanMap.QQGPID.indexOf(req.body.group_id.toString(10))]).send(transName + ': ' + transMsg)
+      var targetChan = client.channels.get(chanMap.DisChanID[chanMap.QQGPID.indexOf(req.body.group_id.toString(10))]);
+      if (shareEmbed) {
+        targetChan.send(transName + ': ', {embed:shareEmbed} )
         .then(message => {
           setMsgMap.run({QQMsgID:req.body.message_id, DisMsgID:message.id});
         });
+      } else {
+        targetChan.send(transName + ': ' + transMsg)
+        .then(message => {
+          setMsgMap.run({QQMsgID:req.body.message_id, DisMsgID:message.id});
+        });
+      }
     };
     res.end();
   })

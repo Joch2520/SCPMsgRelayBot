@@ -6,7 +6,6 @@ exports.run = (client, oldMsg, newMsg) => {
   const MsgMap = new SQLite(path.join(__dirname,'../../data/MsgMappings.sqlite'));
   let chanMap = JSON.parse(fs.readFileSync(path.join(__dirname, '../../data/channelMapping.json'), 'utf8'));
 
-  MsgMap.prepare("CREATE TABLE IF NOT EXISTS DisToCQ (DisMsgID TEXT PRIMARY KEY, QQMsgID TEXT);").run();
   MsgMap.pragma("synchronous = 1");
   MsgMap.pragma("journal_mode = wal");
 
@@ -15,9 +14,9 @@ exports.run = (client, oldMsg, newMsg) => {
   let QQMsgID = MsgMap.prepare('SELECT QQMsgID FROM DisToCQ WHERE DisMsgID = ?').get(oldMsg.id);
   if (QQMsgID) {
     var deleted = {"message_id":""};
-    deleted.message_id = QQMsgID;
+    deleted.message_id = QQMsgID.QQMsgID;
     var CQMsg = { "group_id":"", "message":"" }
-    CQMsg.group_id = chanMap.QQGPID[i];
+    CQMsg.group_id = chanMap.QQGPID[chanMap.DisChanID.indexOf(oldMsg.channel.id)];
     CQMsg.message = '<'+newMsg.member.displayName+'>: '+newMsg.content;
     var delOptions = {
       uri: 'http://127.0.0.1:7501/delete_msg',
@@ -35,7 +34,7 @@ exports.run = (client, oldMsg, newMsg) => {
 
         request(sendOptions, function (error2, response2, body2) {
           if (!error2 && response2.statusCode == 200) {
-            setMsgMap.run({DisMsgID:newMsg.id, QQMsgID:body2.message_id});
+            setMsgMap.run({DisMsgID:newMsg.id, QQMsgID:body2.data.message_id.toString(10)});
           }
         });
       }
