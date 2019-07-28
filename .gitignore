@@ -1,9 +1,9 @@
 /node_modules/
-/CoolQ Air/temp/
 /data/
-/CoolQ Air/conf/
-/CoolQ Air/data/app/*/log/
-/CoolQ Air/data/
+/CoolQ */temp/
+/CoolQ */conf/
+/CoolQ */data/app/*/log/
+/CoolQ */data/
 config.json
 /src/channelMapping.json
 /src/chanMapArc*.json
