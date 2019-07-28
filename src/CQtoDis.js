@@ -45,7 +45,21 @@ exports.run = (client) => {
       for (var i = 0; i < req.body.message.length; i++) {
         var curr = req.body.message[i];
         switch (curr.type) {
-          case 'text': transMsg += curr.data.text + ' '; break;
+          case 'text':
+            var AtDU = /At\([^@#]{2,32}\#\d{4}\)/g;
+            var AtDR = /At\(\#\w{2,32}\)/g;
+            var currText = '' + curr.data.text;
+            if (AtDU.test(currText)) {
+              var MsgMention = currText.match(AtDU);
+              var MsgContent = currText.split(AtDU);
+              for (var j = 0; j < MsgMention.length; j++) {
+                var CurrUTag = MsgMention[j].substring(3,(MsgMention[j].length-1));
+                var CurrUID = client.users.find(person => person.tag === CurrUTag).id;
+                transMsg += '' + MsgContent[j] + '<@' + CurrUID + '>';
+              }
+              transMsg += MsgContent[(MsgContent.length-1)];
+            } else { transMsg += curr.data.text + ' '; }
+            break;
           case 'image': transMsg += curr.data.url + ' '; break;
           case 'at': transMsg += '@'+ curr.data.qq + ' '; break;
           case 'face': transMsg += 'FaceID:' + curr.data.id + ' '; break;

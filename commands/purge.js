@@ -1,6 +1,6 @@
 exports.run = (client, msg, args) => {
   if ( args === [] ) { args = [10] };
-  if ( args[0] > 100 ) { args = [10] };
+  if ( args[0] > 100 ) { args = [100] };
   /* if(!msg.guild.member(client.user).hasPermission("KICK_MEMBERS")) {
     return msg.reply("I got no (KICK_MEMBER) permission to do this.").catch(console.error);
   } else {*/

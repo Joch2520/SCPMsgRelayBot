@@ -13,8 +13,20 @@ exports.run = (DisMsg) => {
 
   if (chanMap.DisChanID.includes(DisMsg.channel.id)) {
     var CQMsg = { "group_id":parseInt(chanMap.QQGPID[chanMap.DisChanID.indexOf(DisMsg.channel.id)]), "message":"" }
-    CQMsg.message = '<'+DisMsg.member.displayName+'('+DisMsg.author.tag+')>: '+DisMsg.content;
-    console.log(JSON.stringify(CQMsg));
+    CQMsg.message = '<'+DisMsg.member.displayName+'('+DisMsg.author.tag+')>: '
+    var AtQU = /At\(\d{5,11}\)/g;
+    var currText = '' + DisMsg.content;
+    if (AtQU.test(currText)) {
+      var MsgMention = currText.match(AtQU);
+      var MsgContent = currText.split(AtQU);
+      var CurrUQQ = '';
+      for (var j = 0; j < MsgMention.length; j++) {
+        CurrUQQ = MsgMention[j].substring(3,(MsgMention[j].length-1));
+        CQMsg.message += '' + MsgContent[j] + ' [CQ:at,qq=' + CurrUQQ + '] ';
+      }
+      CQMsg.message += MsgContent[(MsgContent.length-1)];
+    } else { CQMsg.message += DisMsg.content; }
+    //console.log(JSON.stringify(CQMsg));
     var options = {
       uri: 'http://127.0.0.1:7501/send_group_msg',
       method: 'POST',

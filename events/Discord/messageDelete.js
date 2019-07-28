@@ -8,7 +8,7 @@ exports.run = (client, msg) => {
 
   if (msg.content.toLowerCase().startsWith(pref)) return;
   let QQMsgID = MsgMap.prepare('SELECT QQMsgID FROM DisToCQ WHERE DisMsgID = ?').get(msg.id);
-  var debug = '' + msg.id + ' / ' + JSON.stringify(QQMsgID);
+  //var debug = '' + msg.id + ' / ' + JSON.stringify(QQMsgID);
   //console.log(debug);
   if (QQMsgID.QQMsgID) {
     var deleted = {message_id: parseInt(QQMsgID.QQMsgID)};
