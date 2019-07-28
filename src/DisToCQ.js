@@ -12,9 +12,9 @@ exports.run = (DisMsg) => {
   let setMsgMap = MsgMap.prepare("INSERT OR REPLACE INTO DisToCQ (DisMsgID, QQMsgID) VALUES (@DisMsgID, @QQMsgID);");
 
   if (chanMap.DisChanID.includes(DisMsg.channel.id)) {
-    var CQMsg = { "group_id":"", "message":"" }
-    CQMsg.group_id = chanMap.QQGPID[chanMap.DisChanID.indexOf(DisMsg.channel.id)].toString(10);
-    CQMsg.message = '<'+DisMsg.member.displayName+'>: '+DisMsg.content;
+    var CQMsg = { "group_id":parseInt(chanMap.QQGPID[chanMap.DisChanID.indexOf(DisMsg.channel.id)]), "message":"" }
+    CQMsg.message = '<'+DisMsg.member.displayName+'('+DisMsg.author.tag+')>: '+DisMsg.content;
+    console.log(JSON.stringify(CQMsg));
     var options = {
       uri: 'http://127.0.0.1:7501/send_group_msg',
       method: 'POST',
