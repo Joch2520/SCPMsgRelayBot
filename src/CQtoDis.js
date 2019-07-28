@@ -69,7 +69,7 @@ exports.run = (client) => {
               thumbnail: { url: curr.data.image },
               fields: [{ name: "Song", value: curr.data.audio }]
             }; break;
-            default: transMsg += curr + ' '; break;
+            default: transMsg += JSON.stringify(curr) + ' '; break;
           }; break;
           case 'share': shareEmbed = {
             color: 0x0099FF,
@@ -79,19 +79,19 @@ exports.run = (client) => {
             thumbnail: { url: curr.data.image }
           }; break;
           case 'rich': shareEmbed = curr.data; break;
-          default: transMsg += curr + ' '; break;
+          default: transMsg += JSON.stringify(curr) + ' '; break;
         }
       }
       var targetChan = client.channels.get(chanMap.DisChanID[chanMap.QQGPID.indexOf(req.body.group_id.toString(10))]);
       if (shareEmbed) {
         targetChan.send(transName + ': ', {embed:shareEmbed} )
         .then(message => {
-          setMsgMap.run({QQMsgID:req.body.message_id, DisMsgID:message.id});
+          setMsgMap.run({QQMsgID:req.body.message_id.toString(10), DisMsgID:message.id});
         });
       } else {
         targetChan.send(transName + ': ' + transMsg)
         .then(message => {
-          setMsgMap.run({QQMsgID:req.body.message_id, DisMsgID:message.id});
+          setMsgMap.run({QQMsgID:req.body.message_id.toString(10), DisMsgID:message.id});
         });
       }
     };
