@@ -3,6 +3,7 @@ exports.run = (DisMsg) => {
   const path = require("path");
   const request = require('request');
   const SQLite = require('better-sqlite3');
+  const DQT = require(path.join(__dirname,'../lib/DQTranscoder.js'));
   const MsgMap = new SQLite(path.join(__dirname,'../data/MsgMappings.sqlite'));
   let chanMap = JSON.parse(fs.readFileSync(path.join(__dirname, '../data/channelMapping.json'), 'utf8'));
 
@@ -13,19 +14,9 @@ exports.run = (DisMsg) => {
 
   if (chanMap.DisChanID.includes(DisMsg.channel.id)) {
     var CQMsg = { "group_id":parseInt(chanMap.QQGPID[chanMap.DisChanID.indexOf(DisMsg.channel.id)]), "message":"" }
-    CQMsg.message = '<'+DisMsg.member.displayName+'('+DisMsg.author.tag+')>: '
-    var AtQU = /At\(\d{5,11}\)/g;
-    var currText = '' + DisMsg.content;
-    if (AtQU.test(currText)) {
-      var MsgMention = currText.match(AtQU);
-      var MsgContent = currText.split(AtQU);
-      var CurrUQQ = '';
-      for (var j = 0; j < MsgMention.length; j++) {
-        CurrUQQ = MsgMention[j].substring(3,(MsgMention[j].length-1));
-        CQMsg.message += '' + MsgContent[j] + ' [CQ:at,qq=' + CurrUQQ + '] ';
-      }
-      CQMsg.message += MsgContent[(MsgContent.length-1)];
-    } else { CQMsg.message += DisMsg.content; }
+    CQMsg.message = '<'+DisMsg.member.displayName+'('+DisMsg.author.tag+')>: ';
+    CQMsg.message += DQT.D2Q(DisMsg.content).MsgRepAtUser().subject;
+
     //console.log(JSON.stringify(CQMsg));
     var options = {
       uri: 'http://127.0.0.1:7501/send_group_msg',

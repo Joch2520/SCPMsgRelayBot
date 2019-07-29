@@ -3,6 +3,7 @@ exports.run = (client, oldMsg, newMsg) => {
   const path = require("path");
   const request = require('request');
   const SQLite = require('better-sqlite3');
+  var DQT = require(path.join(__dirname,'../lib/DQTranscoder.js'));
   const MsgMap = new SQLite(path.join(__dirname,'../../data/MsgMappings.sqlite'));
   let chanMap = JSON.parse(fs.readFileSync(path.join(__dirname, '../../data/channelMapping.json'), 'utf8'));
 
@@ -17,7 +18,7 @@ exports.run = (client, oldMsg, newMsg) => {
     deleted.message_id = QQMsgID.QQMsgID;
     var CQMsg = { "group_id":"", "message":"" }
     CQMsg.group_id = chanMap.QQGPID[chanMap.DisChanID.indexOf(oldMsg.channel.id)];
-    CQMsg.message = '<'+newMsg.member.displayName+'>: '+newMsg.content;
+    CQMsg.message = '<'+newMsg.member.displayName+'>: '+ DQT.Q2D(newMsg.content,client).MsgRepAtUser().subject;
     var delOptions = {
       uri: 'http://127.0.0.1:7501/delete_msg',
       method: 'POST',

@@ -4,6 +4,7 @@ exports.run = (client) => {
   const express = require('express');
   const SQLite = require('better-sqlite3');
   const Discord = require('discord.js');
+  var DQT = require(path.join(__dirname,'../lib/DQTranscoder.js'));
   const MsgMap = new SQLite(path.join(__dirname,'../data/MsgMappings.sqlite'));
   let chanMap = JSON.parse(fs.readFileSync(path.join(__dirname, '../data/channelMapping.json'), 'utf8'));
 
@@ -46,19 +47,7 @@ exports.run = (client) => {
         var curr = req.body.message[i];
         switch (curr.type) {
           case 'text':
-            var AtDU = /At\([^@#]{2,32}\#\d{4}\)/g;
-            var AtDR = /At\(\#\w{2,32}\)/g;
-            var currText = '' + curr.data.text;
-            if (AtDU.test(currText)) {
-              var MsgMention = currText.match(AtDU);
-              var MsgContent = currText.split(AtDU);
-              for (var j = 0; j < MsgMention.length; j++) {
-                var CurrUTag = MsgMention[j].substring(3,(MsgMention[j].length-1));
-                var CurrUID = client.users.find(person => person.tag === CurrUTag).id;
-                transMsg += '' + MsgContent[j] + '<@' + CurrUID + '>';
-              }
-              transMsg += MsgContent[(MsgContent.length-1)];
-            } else { transMsg += curr.data.text + ' '; }
+            transMsg += DQT.Q2D(curr.data.text,client).MsgRepAtUser().subject;
             break;
           case 'image': transMsg += curr.data.url + ' '; break;
           case 'at': transMsg += '@'+ curr.data.qq + ' '; break;
