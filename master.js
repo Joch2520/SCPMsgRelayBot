@@ -7,6 +7,7 @@ var DisToCQ = require('./src/DisToCQ')
 console.log('Posting Discord messages to localhost:7501');
 
 let config = JSON.parse(fs.readFileSync('./data/config.json', 'utf8'));
+let chanMap = JSON.parse(fs.readFileSync('./data/channelMapping.json', 'utf8'));
 
 var pref = config.prefix.toLowerCase();
 // add bot to server: discordapp.com/oauth2/authorize?client_id=601680932860067861&scope=bot&permissions=240640
@@ -30,10 +31,8 @@ client.on('message', msg => {
   if (msg.author.bot) return;
   if (msg.content.toLowerCase().startsWith(pref)) return;
   if (msg.system) return;
-  for (var i in config.ReadDiscord) {
-    if ((config.ReadDiscord[i].ServKey.includes(msg.guild.id,1))&&(config.ReadDiscord[i].ChanID.includes(msg.channel.id))) {
-      //var j = config.ReadDiscord[i].ChanID.indexOf(msg.channel.id);
-      //console.log('<'+msg.member.displayName+'('+msg.author.tag+') @'+config.ReadDiscord[i].ServKey[0]+' #'+config.ReadDiscord[i].ChanName[j]+'>: '+msg.content);
+  for (var i in chanMap.DisGuildID) {
+    if ((chanMap.DisGuildID[i] === msg.guild.id)&&(chanMap.DisChanID[i] === msg.channel.id)) {
       DisToCQ.run(msg)
     }
   }

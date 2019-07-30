@@ -4,7 +4,7 @@ exports.run = (client) => {
   const express = require('express');
   const SQLite = require('better-sqlite3');
   const Discord = require('discord.js');
-  var DQT = require('./../lib/DQTranscoder.js');
+  var DQT = require(path.join(__dirname,'../lib/DQTranscoder.js'));
   const MsgMap = new SQLite(path.join(__dirname,'../data/MsgMappings.sqlite'));
   let chanMap = JSON.parse(fs.readFileSync(path.join(__dirname, '../data/channelMapping.json'), 'utf8'));
 
@@ -23,9 +23,9 @@ exports.run = (client) => {
   app.listen(7500);
   console.log('Listening from CoolQ at localhost:7500');
 
-  for (var i = 0; i < chanMap.DisGuildID.length; i++) {
+  /*for (var i = 0; i < chanMap.DisGuildID.length; i++) {
     client.guilds.get(chanMap.DisGuildID[i]).fetchMembers();
-  }
+  }*/
 
   app.post('/', (req, res) => {
     //for debugging:

@@ -3,7 +3,7 @@ exports.run = (client, oldMsg, newMsg) => {
   const path = require("path");
   const request = require('request');
   const SQLite = require('better-sqlite3');
-  var DQT = require('./../lib/DQTranscoder.js');
+  var DQT = require(path.join(__dirname,'../../lib/DQTranscoder.js'));
   const MsgMap = new SQLite(path.join(__dirname,'../../data/MsgMappings.sqlite'));
   let chanMap = JSON.parse(fs.readFileSync(path.join(__dirname, '../../data/channelMapping.json'), 'utf8'));
 
