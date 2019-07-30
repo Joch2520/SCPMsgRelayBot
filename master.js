@@ -1,11 +1,12 @@
 const Discord = require('discord.js');
 const client = new Discord.Client({ autoReconnect: true });
 const fs = require("fs");
+const path = require("path");
 var DisToCQ = require('./src/DisToCQ')
 // var ServerInit = require('./src/ServerInit');
 console.log('Posting Discord messages to localhost:7501');
 
-let config = JSON.parse(fs.readFileSync('./config.json', 'utf8'));
+let config = JSON.parse(fs.readFileSync('./data/config.json', 'utf8'));
 
 var pref = config.prefix.toLowerCase();
 // add bot to server: discordapp.com/oauth2/authorize?client_id=601680932860067861&scope=bot&permissions=240640
