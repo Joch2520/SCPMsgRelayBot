@@ -2,7 +2,7 @@ const Discord = require('discord.js');
 const client = new Discord.Client({ autoReconnect: true });
 const fs = require("fs");
 const path = require("path");
-var DisToCQ = require('./src/DisToCQ')
+var FromDis = require('./src/FromDis')
 // var ServerInit = require('./src/ServerInit');
 console.log('Posting Discord messages to localhost:7501');
 
@@ -33,7 +33,7 @@ client.on('message', msg => {
   if (msg.system) return;
   for (var i in chanMap.DisGuildID) {
     if ((chanMap.DisGuildID[i] === msg.guild.id)&&(chanMap.DisChanID[i] === msg.channel.id)) {
-      DisToCQ.run(msg)
+      FromDis.run(msg)
     }
   }
 });
