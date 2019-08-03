@@ -18,10 +18,11 @@ exports.run = () => {
 
   app.use(express.urlencoded({extended:false}));
   app.use(express.json());
-
+  /*
   app.listen("https://api.telegram.org/bot"+token);
   console.log('Listening from Telegram at ---');
   app.post('/', (req, res) => {
 
   })
+  */
 }

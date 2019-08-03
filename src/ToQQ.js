@@ -2,7 +2,6 @@ exports.run = (receive, src) => {
   const path = require("path");
   const request = require('request');
   const SQLite = require('better-sqlite3');
-  const Transcoder = require('./../lib/Transcoder.js');
   const MsgMap = new SQLite(path.join(__dirname,'../data/MsgMappings.sqlite'));
 
   MsgMap.pragma("synchronous = 1");
@@ -11,11 +10,11 @@ exports.run = (receive, src) => {
   let DToQMap = MsgMap.prepare("INSERT OR REPLACE INTO FromDis (DisMsgID, QQMsgID) VALUES (@DisMsgID, @QQMsgID);");
   let TToQMap = MsgMap.prepare("INSERT OR REPLACE INTO FromTel (TelMsgID, QQMsgID) VALUES (@TelMsgID, @QQMsgID);");
 
-  if (receive.from.toLowerCase === "dis") {
+  if (src.from.toLowerCase === "dis") {
     var optionsQ = {
       uri: 'http://127.0.0.1:7501/send_group_msg',
       method: 'POST',
-      json: QQMsg
+      json: receive
     };
 
     request(optionsQ, function (error, response, body) {

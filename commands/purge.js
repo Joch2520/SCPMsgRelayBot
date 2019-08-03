@@ -7,7 +7,11 @@ exports.run = (client, msg, args) => {
     async function purge(num) {
       msg.delete();
       const fetched = await msg.channel.fetchMessages({limit:num});
+      if (args[0]===1) {
+        msg.channel.delete(fetched);
+      } else {
       msg.channel.bulkDelete(fetched);
+      }
       console.log('Deleted '+fetched.size+' messages from channel '+msg.channel.id);
     };
     purge(args[0]);

@@ -13,13 +13,13 @@ exports.run = (client, receive, src) => {
 
   if (receive.from === "QQ") {
 
-    if (shareEmbed) {
-      targetChan.send(transName + ': ', {embed:shareEmbed} )
+    if (receive.type === "embed") {
+      receive.targetChan.send(receive.sender + ': ', {embed:receive.embed} )
       .then(message => {
         QToDMap.run({QQMsgID:src.id.toString(10), DisMsgID:message.id});
       });
-    } else {
-      targetChan.send(transName + ': ' + transMsg)
+    } else if (receive.type === "normal") {
+      receive.targetChan.send(receive.sender + ': ' + content)
       .then(message => {
         QToDMap.run({QQMsgID:src.id.toString(10), DisMsgID:message.id});
       });
@@ -27,5 +27,16 @@ exports.run = (client, receive, src) => {
 
   } else if (receive.from === "Tel") {
 
+    if (receive.type === "embed") {
+      receive.targetChan.send(receive.sender + ': ', {embed:receive.embed} )
+      .then(message => {
+        TToDMap.run({TelMsgID:src.id.toString(10), DisMsgID:message.id});
+      });
+    } else if (receive.type === "normal") {
+      receive.targetChan.send(receive.sender + ': ' + content)
+      .then(message => {
+        TToDMap.run({TelMsgID:src.id.toString(10), DisMsgID:message.id});
+      });
+    }
   }
 }

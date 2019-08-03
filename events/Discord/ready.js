@@ -1,6 +1,7 @@
 exports.run = (client) => {
+  const path = require("path");
   const SQLite = require('better-sqlite3');
-  const MsgMap = new SQLite(path.join(__dirname,'../data/MsgMappings.sqlite'));
+  const MsgMap = new SQLite(path.join(__dirname,'../../data/MsgMappings.sqlite'));
   MsgMap.pragma("synchronous = 1");
   MsgMap.pragma("journal_mode = wal");
 

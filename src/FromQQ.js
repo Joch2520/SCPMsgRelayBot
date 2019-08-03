@@ -21,9 +21,12 @@ exports.run = (client) => {
 
   app.post('/', (req, res) => {
     if ((req.body.message_type === 'group') && (chanMap.QQGPID.includes(req.body.group_id.toString(10))) && (req.body.post_type === 'message')) {
-
-      var TargetDisChan = client.channels.get(chanMap.DisChanID[chanMap.QQGPID.indexOf(req.body.group_id.toString(10))]);
-      var TargetTelGP = chanMap.TelGPID[chanMap.QQGPID.indexOf(req.body.group_id.toString(10))];
+      if (chanMap.DisChanID[chanMap.QQGPID.indexOf(req.body.group_id.toString(10))]) {
+        var TargetDisChan = client.channels.get(chanMap.DisChanID[chanMap.QQGPID.indexOf(req.body.group_id.toString(10))]);
+      } else {var TargetDisChan = null};
+      if (chanMap.TelGPID[chanMap.QQGPID.indexOf(req.body.group_id.toString(10))]) {
+        var TargetTelGP = chanMap.TelGPID[chanMap.QQGPID.indexOf(req.body.group_id.toString(10))];
+      } else {var TargetTelGP = null};
       var src = { "from":"dis", "id":req.body.message_id, "targetChan":TargetDisChan };
       var transName = '<';
       if (req.body.sender.title) { transName += '['+req.body.sender.title+']'}
@@ -31,9 +34,8 @@ exports.run = (client) => {
         else if (req.body.sender.nickname) { transName += req.body.sender.nickname }
       transName += ' (' + req.body.sender.user_id + ')';
       transName += '>';
-      var DisMsg = { "targetChan":TargetDisChan,"content":transName }, TelMsg = { "chat_id":TargetTelGP, "text":"" };
+      var DisMsg = { "targetChan":TargetDisChan, "type":"", "sender":transName, "content":"", "embed":{} }, TelMsg = { "chat_id":TargetTelGP, "text":"" };
       var files = [];
-      var shareEmbed;
       for (var i = 0; i < req.body.message.length; i++) {
         var curr = req.body.message[i];
         switch (curr.type) {
@@ -46,7 +48,7 @@ exports.run = (client) => {
           case 'face': DisMsg.content += 'FaceID:' + curr.data.id + ' '; TelMsg.text += 'FaceID:' + curr.data.id + ' '; break;
           case 'emoji': DisMsg.content += 'EmojiID:' + curr.data.id + ' '; TelMsg.text += 'EmojiID:' + curr.data.id + ' '; break;
           case 'music': switch (curr.data.type) {
-            /*case 'qq': shareEmbed = {
+            /*case 'qq': DisMsg.embed = {
               color: 0xFF9900,
               title: curr.data.title,
               url: 'http://y.qq.com'+ curr.data.id,
@@ -55,7 +57,7 @@ exports.run = (client) => {
             }; break;
             case '163':    ; break;
             case 'xiami':    ; break;*/
-            case 'custom': shareEmbed = {
+            case 'custom': DisMsg.embed = {
               color: 0xFF9900,
               title: curr.data.title,
               url: curr.data.url,
@@ -65,17 +67,18 @@ exports.run = (client) => {
             }; break;
             default: DisMsg.content += JSON.stringify(curr) + ' '; break;
           }; break;
-          case 'share': shareEmbed = {
+          case 'share': DisMsg.embed = {
             color: 0x0099FF,
             title: curr.data.title,
             url: curr.data.url,
             description: curr.data.content,
             thumbnail: { url: curr.data.image }
           }; break;
-          case 'rich': shareEmbed = curr.data; break;
+          case 'rich': DisMsg.embed = curr.data; break;
           default: DisMsg.content += JSON.stringify(curr) + ' '; break;
         }
       }
+      if (DisMsg.embed) { DisMsg.type = "embed" } else { DisMsg.type = "normal" }
       if (TargetDisChan) { ToDis.run(client, DisMsg, src); }
       if (TargetTelGP) { ToTel.run(TelMsg, src); }
     };
