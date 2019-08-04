@@ -1,20 +1,21 @@
 {
-  "name": "DiscordQQRelayBot",
+  "name": "SCPMsgRelayBot",
   "version": "0.0.1",
-  "description": "",
+  "description": "Provides message relays bewteen Discord, QQ and Telegram. Developed for use of SCP-CN branch communications.",
   "main": "master.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node master.js"
   },
   "keywords": [],
-  "author": "Joch2520 (Discord: Joch#6879) (QQ: 2502425837)",
+  "author": "GitHub: Joch2520 (Discord: Joch#6879) (QQ: 2502425837) (Telegram: @Zokhoi)",
   "license": "ISC",
   "dependencies": {
     "better-sqlite3": "^5.4.1",
     "discord.js": "^11.5.1",
     "express": "^4.16.0",
     "node-gyp": "^5.0.3",
+    "node-telegram-bot-api": "^0.30.0",
     "request": "^2.88.0"
   }
 }

@@ -26,7 +26,7 @@ exports.run = (receive, src) => {
         if (src.from === "dis") {
           DToQMap.run({DisMsgID:src.id, QQMsgID:body.data.message_id.toString(10)});
         } else if (src.from === "tel") {
-          TToQMap.run({TelMsgID:src.id, QQMsgID:body.data.message_id.toString(10)});
+          TToQMap.run({TelMsgID:src.id.toString(10), QQMsgID:body.data.message_id.toString(10)});
         }
       }
     });

@@ -1,8 +1,6 @@
 exports.run = (receive, src) => {
   const path = require("path");
-  const express = require('express');
-  const request = require('request');
-  let TelToken = JSON.parse(fs.readFileSync('./data/config.json', 'utf8')).loginTelegram;
+  let TelToken = JSON.parse(fs.readFileSync(path.join(__dirname,'../data/config.json'), 'utf8')).loginTelegram;
   const SQLite = require('better-sqlite3');
   const MsgMap = new SQLite(path.join(__dirname,'../data/MsgMappings.sqlite'));
 
@@ -24,8 +22,11 @@ exports.run = (receive, src) => {
       console.log(JSON.stringify(response));
       console.log(JSON.stringify(body));
       console.log(debug);*/
-      if (src.from.toLowerCase === "qq") { QToTMap.run({QQMsgID:src.id, TelMsgID:body.result.message_id.toString(10)}); }
-      if (src.from.toLowerCase === "dis") { DToTMap.run({DisMsgID:src.id, TelMsgID:body.result.message_id.toString(10)}); }
+      if (src.from.toLowerCase === "qq") {
+        QToTMap.run({QQMsgID:src.id.toString(10), TelMsgID:body.result.message_id.toString(10)});
+      } else if (src.from.toLowerCase === "dis") {
+        DToTMap.run({DisMsgID:src.id, TelMsgID:body.result.message_id.toString(10)});
+      }
     }
   });
 }

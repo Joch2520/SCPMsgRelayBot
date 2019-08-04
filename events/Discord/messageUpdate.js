@@ -1,44 +1,36 @@
-exports.run = (client, oldMsg, newMsg) => {
+exports.run = (disClient, telClient, oldMsg, newMsg) => {
   const fs = require("fs");
   const path = require("path");
   const request = require('request');
   const SQLite = require('better-sqlite3');
-  var DQT = require(path.join(__dirname,'../../lib/DQTranscoder.js'));
+  var Transcoder = require(path.join(__dirname,'../../lib/Transcoder.js'));
+  var UpdateQQ = require(path.join(__dirname,'../../src/UpdateQQ.js'));
+  var UpdateTel = require(path.join(__dirname,'../../src/UpdateTel.js'));
   const MsgMap = new SQLite(path.join(__dirname,'../../data/MsgMappings.sqlite'));
   let chanMap = JSON.parse(fs.readFileSync(path.join(__dirname, '../../data/channelMapping.json'), 'utf8'));
 
   MsgMap.pragma("synchronous = 1");
   MsgMap.pragma("journal_mode = wal");
 
-  let setMsgMap = MsgMap.prepare("INSERT OR REPLACE INTO DisToCQ (DisMsgID, QQMsgID) VALUES (@DisMsgID, @QQMsgID);");
 
-  let QQMsgID = MsgMap.prepare('SELECT QQMsgID FROM DisToCQ WHERE DisMsgID = ?').get(oldMsg.id);
+  let QQMsgID = MsgMap.prepare('SELECT QQMsgID FROM FromDis WHERE DisMsgID = ?').get(oldMsg.id);
+  let TelMsgID = MsgMap.prepare('SELECT TelMsgID FROM FromDis WHERE DisMsgID = ?').get(oldMsg.id);
+
   if (QQMsgID) {
-    var deleted = {"message_id":""};
-    deleted.message_id = QQMsgID.QQMsgID;
-    var CQMsg = { "group_id":"", "message":"" }
-    CQMsg.group_id = chanMap.QQGPID[chanMap.DisChanID.indexOf(oldMsg.channel.id)];
-    CQMsg.message = '<'+newMsg.member.displayName+'>: '+ DQT.Q2D(newMsg.content,client).MsgRepAtUser().subject;
-    var delOptions = {
-      uri: 'http://127.0.0.1:7501/delete_msg',
-      method: 'POST',
-      json: deleted
+    var deleted = {"message_id":QQMsgID.QQMsgID.toString(10)};
+    var QQMsg = { "group_id":"", "message":"" }
+    QQMsg.group_id = chanMap.QQGPID[chanMap.DisChanID.indexOf(oldMsg.channel.id)];
+    QQMsg.message = '<'+newMsg.member.displayName+'>: '+ Transcoder.D2Q(newMsg.content).MsgRepAtUser().subject;
+    var src = { "from":"dis", "id":NewMsg.id };
+    UpdateQQ.run(deleted, QQMsg, src);
+  };
+  if (TelMsgID) {
+    var TelMsg = {
+      "chat_id":chanMap.TelChatID[chanMap.DisChanID.indexOf(oldMsg.channel.id)],
+      "message_id":TelMsgID.TelMsgID.toString(10),
+      "text": '<'+newMsg.member.displayName+'>: '+ Transcoder.D2T(newMsg.content,telClient).MsgRepAtUser().subject
     };
-
-    request(delOptions, function (error1, response1, body1) {
-      if (!error1 && response1.statusCode == 200) {
-        var sendOptions = {
-          uri: 'http://127.0.0.1:7501/send_group_msg',
-          method: 'POST',
-          json: CQMsg
-        };
-
-        request(sendOptions, function (error2, response2, body2) {
-          if (!error2 && response2.statusCode == 200) {
-            setMsgMap.run({DisMsgID:newMsg.id, QQMsgID:body2.data.message_id.toString(10)});
-          }
-        });
-      }
-    });
+    var src = { "from":"dis", "id":NewMsg.id };
+    UpdateTel.run(telClient, TelMsg, src);
   };
 }

@@ -1,4 +1,4 @@
-exports.run = (client) => {
+exports.run = (disClient,telClient) => {
   const path = require("path");
   const SQLite = require('better-sqlite3');
   const MsgMap = new SQLite(path.join(__dirname,'../../data/MsgMappings.sqlite'));
@@ -9,10 +9,10 @@ exports.run = (client) => {
   MsgMap.prepare("CREATE TABLE IF NOT EXISTS FromDis (DisMsgID TEXT PRIMARY KEY, QQMsgID TEXT, TelMsgID TEXT);").run();
   MsgMap.prepare("CREATE TABLE IF NOT EXISTS FromTel (TelMsgID TEXT PRIMARY KEY, DisMsgID TEXT, QQMsgID TEXT);").run();
 
-  console.log(`Discord logged in as ${client.user.tag}.`);
-  console.log(`Ready to serve in ${client.channels.size} channels on ${client.guilds.size} servers, for a total of ${client.users.size} users.`);
+  console.log(`Discord logged in as ${disClient.user.tag}.`);
+  console.log(`Ready to serve in ${disClient.channels.size} channels on ${disClient.guilds.size} servers, for a total of ${disClient.users.size} users.`);
   var FromQQ = require('./../../src/FromQQ');
-  FromQQ.run(client);
+  FromQQ.run(disClient,telClient);
   var FromTel = require('./../../src/FromTel');
   FromTel.run();
 }

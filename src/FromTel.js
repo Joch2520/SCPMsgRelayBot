@@ -1,28 +1,32 @@
-exports.run = () => {
+exports.run = (TelMsg) => {
   const fs = require("fs");
   const path = require("path");
-  const express = require('express');
-  const https = require('https');
-  const SQLite = require('better-sqlite3');
-  const MsgMap = new SQLite(path.join(__dirname,'../data/MsgMappings.sqlite'));
-  let token = JSON.parse(fs.readFileSync(path.join(__dirname,'./../data/config.json'), 'utf8')).loginTelegram;
+  var ToQQ = require('./ToQQ.js');
+  var ToDis = require('./ToDis.js');
+  const Transcoder = require('./../lib/Transcoder.js');
   let chanMap = JSON.parse(fs.readFileSync(path.join(__dirname, '../data/channelMapping.json'), 'utf8'));
 
-  MsgMap.pragma("synchronous = 1");
-  MsgMap.pragma("journal_mode = wal");
+  if (chanMap.TelChatID.includes(TelMsg.chat.id.toString(10))) {
+    if (chanMap.QQGPID[chanMap.TelChatID.indexOf(TelMsg.chat.id.toString(10))]) {
+      var TargetQQGP = parseInt(chanMap.QQGPID[chanMap.TelChatID.indexOf(TelMsg.chat.id.toString(10))]);
+    } else {var TargetQQGP = null};
+    if (chanMap.DisChanID[chanMap.TelChatID.indexOf(TelMsg.chat.id.toString(10))]) {
+      var TargetDisChan = chanMap.DisChanID[chanMap.TelChatID.indexOf(TelMsg.chat.id.toString(10))];
+    } else {var TargetDisChan = null};
 
-  let TToDMap = MsgMap.prepare("INSERT OR REPLACE INTO FromTel (TelMsgID, DisMsgID) VALUES (@TelMsgID, @DisMsgID);");
-  let TToQMap = MsgMap.prepare("INSERT OR REPLACE INTO FromTel (TelMsgID, QQMsgID) VALUES (@TelMsgID, @QQMsgID);");
-
-  const app = express();
-
-  app.use(express.urlencoded({extended:false}));
-  app.use(express.json());
-  /*
-  app.listen("https://api.telegram.org/bot"+token);
-  console.log('Listening from Telegram at ---');
-  app.post('/', (req, res) => {
-
-  })
-  */
+    var transName = '<'+TelMsg.from.first_name;
+    if (TelMsg.from.last_name) { transName += ' ' + TelMsg.from.last_name; };
+    if (TelMsg.from.username) { transName += ' ('+TelMsg.from.username+')'};
+    transName += '>';
+    var QQMsg = { "group_id":TargetQQGP, "message":"" };
+    var DisMsg = { "targetChan":TargetDisChan, "type":"", "sender":transName, "content":"", "embed":{} };
+    var src = { "from":"tel", "id":TelMsg.id };
+    QQMsg.message = transName + ': '
+    QQMsg.message += Transcoder.D2Q(DisMsg.content).MsgRepAtUser().subject;
+    //TelMsg.text += Transcoder.D2T(DisMsg.content).MsgRepAtUser().subject;
+    //console.log(JSON.stringify(QQMsg));
+    //console.log(JSON.stringify(TelMsg));
+    if (TargetQQGP) { ToQQ.run(QQMsg, src); }
+    if (TargetDisChan) { ToDis.run(DisMsg, src); }
+  }
 }

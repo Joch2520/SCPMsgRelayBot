@@ -1,4 +1,4 @@
-exports.run = (client) => {
+exports.run = (disClient,telClient) => {
   const fs = require("fs");
   const path = require("path");
   const express = require('express');
@@ -16,16 +16,16 @@ exports.run = (client) => {
   console.log('Listening from CoolQ at localhost:7500');
 
   /*for (var i = 0; i < chanMap.DisGuildID.length; i++) {
-    client.guilds.get(chanMap.DisGuildID[i]).fetchMembers();
+    disClient.guilds.get(chanMap.DisGuildID[i]).fetchMembers();
   }*/
 
   app.post('/', (req, res) => {
     if ((req.body.message_type === 'group') && (chanMap.QQGPID.includes(req.body.group_id.toString(10))) && (req.body.post_type === 'message')) {
       if (chanMap.DisChanID[chanMap.QQGPID.indexOf(req.body.group_id.toString(10))]) {
-        var TargetDisChan = client.channels.get(chanMap.DisChanID[chanMap.QQGPID.indexOf(req.body.group_id.toString(10))]);
+        var TargetDisChan = disClient.channels.get(chanMap.DisChanID[chanMap.QQGPID.indexOf(req.body.group_id.toString(10))]);
       } else {var TargetDisChan = null};
-      if (chanMap.TelGPID[chanMap.QQGPID.indexOf(req.body.group_id.toString(10))]) {
-        var TargetTelGP = chanMap.TelGPID[chanMap.QQGPID.indexOf(req.body.group_id.toString(10))];
+      if (chanMap.TelChatID[chanMap.QQGPID.indexOf(req.body.group_id.toString(10))]) {
+        var TargetTelGP = chanMap.TelChatID[chanMap.QQGPID.indexOf(req.body.group_id.toString(10))];
       } else {var TargetTelGP = null};
       var src = { "from":"dis", "id":req.body.message_id, "targetChan":TargetDisChan };
       var transName = '<';
@@ -34,14 +34,15 @@ exports.run = (client) => {
         else if (req.body.sender.nickname) { transName += req.body.sender.nickname }
       transName += ' (' + req.body.sender.user_id + ')';
       transName += '>';
-      var DisMsg = { "targetChan":TargetDisChan, "type":"", "sender":transName, "content":"", "embed":{} }, TelMsg = { "chat_id":TargetTelGP, "text":"" };
+      var DisMsg = { "targetChan":TargetDisChan, "type":"", "sender":transName, "content":"", "embed":{} };
+      var TelMsg = { "chat_id":TargetTelGP, "text":"" };
       var files = [];
       for (var i = 0; i < req.body.message.length; i++) {
         var curr = req.body.message[i];
         switch (curr.type) {
           case 'text':
-            DisMsg.content += Transcoder.Q2D(curr.data.text,client).MsgRepAtUser().subject;
-            TelMsg.text += Transcoder.Q2D(curr.data.text,client).MsgRepAtUser().subject;
+            DisMsg.content += Transcoder.Q2D(curr.data.text,disClient).MsgRepAtUser().subject;
+            //TelMsg.text += Transcoder.Q2T(curr.data.text,telClient).MsgRepAtUser().subject;
             break;
           case 'image': DisMsg.content += curr.data.url + ' '; break;
           case 'at': DisMsg.content += '@'+ curr.data.qq + ' '; TelMsg.text += '@'+ curr.data.qq + ' '; break;
@@ -79,8 +80,8 @@ exports.run = (client) => {
         }
       }
       if (DisMsg.embed) { DisMsg.type = "embed" } else { DisMsg.type = "normal" }
-      if (TargetDisChan) { ToDis.run(client, DisMsg, src); }
-      if (TargetTelGP) { ToTel.run(TelMsg, src); }
+      if (TargetDisChan) { ToDis.run(disClient, DisMsg, src); }
+      if (TargetTelGP) { ToTel.run(telClient, TelMsg, src); }
     };
     res.end();
   })
