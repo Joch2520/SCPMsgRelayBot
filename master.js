@@ -34,7 +34,7 @@ fs.readdir("./events/Telegram", (err, files) => {
   files.forEach(file => {
     let eventFunction = require(`./events/Telegram/${file}`);
     let eventName = file.split(".")[0];
-    telClient.on(eventName, (...args) => eventFunction.run(telClient, ...args));
+    telClient.on(eventName, (...args) => eventFunction.run(disClient,telClient, ...args));
   });
 });
 
@@ -73,12 +73,8 @@ disClient.on("message", msg => {
 telClient.on("message", msg => {
   if (msg.from.is_bot) return;
   if (msg.text.toLowerCase().startsWith(pref)) return;
-  if (chanMap.TelChatID.hasOwnProperty(msg.chat.id)) {
+  if (chanMap.TelChatID.includes(msg.chat.id.toString(10))) {
+    FromTel.run(msg)
+  }
 
-  }
-  for (var i in chanMap.TelChatID) {
-    if (chanMap.TelChatID[i] === msg.chat.id) {
-      FromTel.run(msg)
-    }
-  }
 })

@@ -18,12 +18,22 @@ exports.run = (TelMsg) => {
     if (TelMsg.from.last_name) { transName += ' ' + TelMsg.from.last_name; };
     if (TelMsg.from.username) { transName += ' ('+TelMsg.from.username+')'};
     transName += '>';
+
+    if (TelMsg.forward_from) {
+      transName += '[轉寄] ' +'<<'+TelMsg.forward_from.first_name;
+      if (TelMsg.forward_from.last_name) { transName += ' ' + TelMsg.forward_from.last_name; };
+      if (TelMsg.forward_from.username) { transName += ' ('+TelMsg.forward_from.username+')'};
+      transName += '>>';
+    } else if (TelMsg.forward_sender_name) {
+      transName += '[轉寄] ' +'<<'+TelMsg.forward_sender_name+'>>';
+    }
+
     var QQMsg = { "group_id":TargetQQGP, "message":"" };
     var DisMsg = { "targetChan":TargetDisChan, "type":"", "sender":transName, "content":"", "embed":{} };
     var src = { "from":"tel", "id":TelMsg.id };
     QQMsg.message = transName + ': '
-    QQMsg.message += Transcoder.D2Q(DisMsg.content).MsgRepAtUser().subject;
-    //TelMsg.text += Transcoder.D2T(DisMsg.content).MsgRepAtUser().subject;
+    QQMsg.message += Transcoder.ToQ(DisMsg.content).MsgRepAtUser().subject;
+    //TelMsg.text += Transcoder.ToD(DisMsg.content).MsgRepAtUser().subject;
     //console.log(JSON.stringify(QQMsg));
     //console.log(JSON.stringify(TelMsg));
     if (TargetQQGP) { ToQQ.run(QQMsg, src); }

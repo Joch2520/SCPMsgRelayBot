@@ -13,6 +13,4 @@ exports.run = (disClient,telClient) => {
   console.log(`Ready to serve in ${disClient.channels.size} channels on ${disClient.guilds.size} servers, for a total of ${disClient.users.size} users.`);
   var FromQQ = require('./../../src/FromQQ');
   FromQQ.run(disClient,telClient);
-  var FromTel = require('./../../src/FromTel');
-  FromTel.run();
 }

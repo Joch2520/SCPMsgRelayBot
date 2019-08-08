@@ -17,8 +17,8 @@ exports.run = (DisMsg) => {
     var TelMsg = { "chat_id":TargetTelGP, "text":"" };
     var src = { "from":"dis", "id":DisMsg.id };
     QQMsg.message = TelMsg.text = '<'+DisMsg.member.displayName+' ('+DisMsg.author.tag+')>: ';
-    QQMsg.message += Transcoder.D2Q(DisMsg.content).MsgRepAtUser().subject;
-    TelMsg.text += Transcoder.D2T(DisMsg.content).MsgRepAtUser().subject;
+    QQMsg.message += Transcoder.ToQ(DisMsg.content).MsgRepAtUser().subject;
+    TelMsg.text += Transcoder.ToT(DisMsg.content).MsgRepAtUser().subject;
     //console.log(JSON.stringify(QQMsg));
     //console.log(JSON.stringify(TelMsg));
     if (TargetQQGP) { ToQQ.run(QQMsg, src); }

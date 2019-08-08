@@ -41,8 +41,8 @@ exports.run = (disClient,telClient) => {
         var curr = req.body.message[i];
         switch (curr.type) {
           case 'text':
-            DisMsg.content += Transcoder.Q2D(curr.data.text,disClient).MsgRepAtUser().subject;
-            //TelMsg.text += Transcoder.Q2T(curr.data.text,telClient).MsgRepAtUser().subject;
+            DisMsg.content += Transcoder.ToD(curr.data.text,disClient).MsgRepAtUser().subject;
+            //TelMsg.text += Transcoder.ToT(curr.data.text,telClient).MsgRepAtUser().subject;
             break;
           case 'image': DisMsg.content += curr.data.url + ' '; break;
           case 'at': DisMsg.content += '@'+ curr.data.qq + ' '; TelMsg.text += '@'+ curr.data.qq + ' '; break;
