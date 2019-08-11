@@ -5,8 +5,8 @@ exports.run = (disClient, telClient, oldMsg, newMsg) => {
   var Transcoder = require(path.join(__dirname,'../../lib/Transcoder.js'));
   var UpdateQQ = require(path.join(__dirname,'../../src/UpdateQQ.js'));
   var UpdateTel = require(path.join(__dirname,'../../src/UpdateTel.js'));
-  const MsgMap = new SQLite(path.join(__dirname,'../../data/MsgMappings.sqlite'));
-  let chanMap = JSON.parse(fs.readFileSync(path.join(__dirname, '../../data/channelMapping.json'), 'utf8'));
+  const MsgMap = new SQLite(path.join(__dirname,'../../../data/MsgMappings.sqlite'));
+  let chanMap = JSON.parse(fs.readFileSync(path.join(__dirname, '../../../data/channelMapping.json'), 'utf8'));
 
   MsgMap.pragma("synchronous = 1");
   MsgMap.pragma("journal_mode = wal");

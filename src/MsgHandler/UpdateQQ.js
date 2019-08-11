@@ -22,9 +22,9 @@ exports.run = (oldel, newup, src) => {
 
       request(sendOptions, function (error2, response2, body2) {
         if (!error2 && response2.statusCode == 200) {
-          if (src.from.toLowerCase === "dis") {
+          if (src.from.toLowerCase() === "dis") {
             DToQMap.run({DisMsgID:src.id, QQMsgID:body2.data.message_id.toString(10)});
-          } else if (src.from.toLowerCase === "tel") {
+          } else if (src.from.toLowerCase() === "tel") {
             TToQMap.run({TelMsgID:src.id.toString(10), QQMsgID:body2.data.message_id.toString(10)});
           }
 

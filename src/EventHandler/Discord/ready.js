@@ -1,7 +1,7 @@
 exports.run = (disClient,telClient) => {
   const path = require("path");
   const SQLite = require('better-sqlite3');
-  const MsgMap = new SQLite(path.join(__dirname,'../../data/MsgMappings.sqlite'));
+  const MsgMap = new SQLite(path.join(__dirname,'../../../data/MsgMappings.sqlite'));
   MsgMap.pragma("synchronous = 1");
   MsgMap.pragma("journal_mode = wal");
 
@@ -11,6 +11,6 @@ exports.run = (disClient,telClient) => {
 
   console.log(`Discord logged in as ${disClient.user.tag}.`);
   console.log(`Ready to serve in ${disClient.channels.size} channels on ${disClient.guilds.size} servers, for a total of ${disClient.users.size} users.`);
-  var FromQQ = require('./../../src/FromQQ');
+  var FromQQ = require('./../../MsgHandler/FromQQ');
   FromQQ.run(disClient,telClient);
 }

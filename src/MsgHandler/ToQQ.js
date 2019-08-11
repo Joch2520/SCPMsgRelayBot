@@ -2,7 +2,7 @@ exports.run = (receive, src) => {
   const path = require("path");
   const request = require('request');
   const SQLite = require('better-sqlite3');
-  const MsgMap = new SQLite(path.join(__dirname,'../data/MsgMappings.sqlite'));
+  const MsgMap = new SQLite(path.join(__dirname,'../../data/MsgMappings.sqlite'));
 
   MsgMap.pragma("synchronous = 1");
   MsgMap.pragma("journal_mode = wal");
@@ -10,7 +10,7 @@ exports.run = (receive, src) => {
   let DToQMap = MsgMap.prepare("INSERT OR REPLACE INTO FromDis (DisMsgID, QQMsgID) VALUES (@DisMsgID, @QQMsgID);");
   let TToQMap = MsgMap.prepare("INSERT OR REPLACE INTO FromTel (TelMsgID, QQMsgID) VALUES (@TelMsgID, @QQMsgID);");
 
-  if (src.from.toLowerCase === "dis") {
+  if (src.from.toLowerCase() === "dis") {
     var optionsQ = {
       uri: 'http://127.0.0.1:7501/send_group_msg',
       method: 'POST',

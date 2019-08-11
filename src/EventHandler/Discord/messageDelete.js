@@ -3,8 +3,8 @@ exports.run = (client, msg) => {
   const path = require("path");
   const request = require('request');
   const SQLite = require('better-sqlite3');
-  const MsgMap = new SQLite(path.join(__dirname,'../../data/MsgMappings.sqlite'));
-  let pref = JSON.parse(fs.readFileSync(path.join(__dirname,'../../data/config.json'), 'utf8')).prefix.toLowerCase();
+  const MsgMap = new SQLite(path.join(__dirname,'../../../data/MsgMappings.sqlite'));
+  let pref = JSON.parse(fs.readFileSync(path.join(__dirname,'../../../data/config.json'), 'utf8')).prefix.toLowerCase();
 
   if (msg.content.toLowerCase().startsWith(pref)) return;
   let QQMsgID = MsgMap.prepare('SELECT QQMsgID FROM DisToCQ WHERE DisMsgID = ?').get(msg.id);

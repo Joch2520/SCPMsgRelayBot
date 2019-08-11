@@ -5,7 +5,7 @@ exports.run = (disClient,telClient) => {
   const Discord = require('discord.js');
   var ToDis = require('./ToDis.js');
   var ToTel = require('./ToTel.js');
-  let chanMap = JSON.parse(fs.readFileSync(path.join(__dirname, '../data/channelMapping.json'), 'utf8'));
+  let chanMap = JSON.parse(fs.readFileSync(path.join(__dirname, '../../data/channelMapping.json'), 'utf8'));
 
   const app = express();
 
@@ -34,9 +34,8 @@ exports.run = (disClient,telClient) => {
         else if (req.body.sender.nickname) { transName += req.body.sender.nickname }
       transName += ' (' + req.body.sender.user_id + ')';
       transName += '>';
-      var DisMsg = { "targetChan":TargetDisChan, "type":"", "sender":transName, "content":"", "embed":{} };
+      var DisMsg = { "targetChan":TargetDisChan, "type":"", "sender":transName, "content":"", "embed":{}, "files":[] };
       var TelMsg = { "chat_id":TargetTelGP, "text":"" };
-      var files = [];
       for (var i = 0; i < req.body.message.length; i++) {
         var curr = req.body.message[i];
         switch (curr.type) {
@@ -44,7 +43,7 @@ exports.run = (disClient,telClient) => {
             DisMsg.content += Transcoder.ToD(curr.data.text,disClient).MsgRepAtUser().subject;
             //TelMsg.text += Transcoder.ToT(curr.data.text,telClient).MsgRepAtUser().subject;
             break;
-          case 'image': DisMsg.content += curr.data.url + ' '; break;
+          case 'image': DisMsg.files.push(curr.data.url); break;
           case 'at': DisMsg.content += '@'+ curr.data.qq + ' '; TelMsg.text += '@'+ curr.data.qq + ' '; break;
           case 'face': DisMsg.content += 'FaceID:' + curr.data.id + ' '; TelMsg.text += 'FaceID:' + curr.data.id + ' '; break;
           case 'emoji': DisMsg.content += 'EmojiID:' + curr.data.id + ' '; TelMsg.text += 'EmojiID:' + curr.data.id + ' '; break;
