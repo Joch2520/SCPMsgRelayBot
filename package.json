@@ -12,6 +12,8 @@
   "license": "ISC",
   "dependencies": {
     "better-sqlite3": "^5.4.1",
+    "cq-websocket": "^2.0.2",
+    "cqhttp": "^1.1.1",
     "discord.js": "^11.5.1",
     "express": "^4.16.0",
     "node-gyp": "^5.0.3",

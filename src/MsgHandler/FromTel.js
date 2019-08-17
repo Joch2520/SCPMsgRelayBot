@@ -1,4 +1,4 @@
-exports.run = (disClient, TelMsg) => {
+exports.run = (clients, TelMsg) => {
   const fs = require("fs");
   const path = require("path");
   var ToQQ = require('./ToQQ.js');
@@ -36,7 +36,7 @@ exports.run = (disClient, TelMsg) => {
     //TelMsg.text += Transcoder.ToD(DisMsg.content).MsgRepAtUser().subject;
     //console.log(JSON.stringify(QQMsg));
     //console.log(JSON.stringify(TelMsg));
-    if (TargetQQGP) { ToQQ.run(QQMsg, src); }
-    if (TargetDisChan) { ToDis.run(disClient, DisMsg, src); }
+    if (TargetQQGP) { ToQQ.run(clients.qq, QQMsg, src); }
+    if (TargetDisChan) { ToDis.run(clients.dis, DisMsg, src); }
   }
 }
