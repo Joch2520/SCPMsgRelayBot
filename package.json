@@ -5,7 +5,7 @@
   "main": "master.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node master.js"
+    "start": "cd src && node master.js"
   },
   "keywords": [],
   "author": "GitHub: Joch2520 (Discord: Joch#6879) (QQ: 2502425837) (Telegram: @Zokhoi)",
@@ -18,6 +18,7 @@
     "express": "^4.16.0",
     "node-gyp": "^5.0.3",
     "node-telegram-bot-api": "^0.30.0",
-    "request": "^2.88.0"
+    "request": "^2.88.0",
+    "scpper.js": "^3.0.3"
   }
 }

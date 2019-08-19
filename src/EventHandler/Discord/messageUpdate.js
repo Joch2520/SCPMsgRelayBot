@@ -1,10 +1,10 @@
-exports.run = (disClient, telClient, oldMsg, newMsg) => {
+exports.run = (clients, oldMsg, newMsg) => {
   const fs = require("fs");
   const path = require("path");
   const SQLite = require('better-sqlite3');
   var Transcoder = require(path.join(__dirname,'../../lib/Transcoder.js'));
-  var UpdateQQ = require(path.join(__dirname,'../../src/UpdateQQ.js'));
-  var UpdateTel = require(path.join(__dirname,'../../src/UpdateTel.js'));
+  var UpdateQQ = require(path.join(__dirname,'../../MsgHandler/UpdateQQ.js'));
+  var UpdateTel = require(path.join(__dirname,'../../MsgHandler/UpdateTel.js'));
   const MsgMap = new SQLite(path.join(__dirname,'../../../data/MsgMappings.sqlite'));
   let chanMap = JSON.parse(fs.readFileSync(path.join(__dirname, '../../../data/channelMapping.json'), 'utf8'));
 
@@ -21,15 +21,15 @@ exports.run = (disClient, telClient, oldMsg, newMsg) => {
     QQMsg.group_id = chanMap.QQGPID[chanMap.DisChanID.indexOf(oldMsg.channel.id)];
     QQMsg.message = '<'+newMsg.member.displayName+'>: '+ Transcoder.ToQ(newMsg.content).MsgRepAtUser().subject;
     var src = { "from":"dis", "id":newMsg.id };
-    UpdateQQ.run(deleted, QQMsg, src);
+    UpdateQQ.run(clients.qq, deleted, QQMsg, src);
   };
   if (TelMsgID) {
     var TelMsg = {
       "chat_id":chanMap.TelChatID[chanMap.DisChanID.indexOf(oldMsg.channel.id)],
       "message_id":TelMsgID.TelMsgID.toString(10),
-      "text": '<'+newMsg.member.displayName+'>: '+ Transcoder.ToT(newMsg.content,telClient).MsgRepAtUser().subject
+      "text": '<'+newMsg.member.displayName+'>: '+ Transcoder.ToT(newMsg.content,clients.tel).MsgRepAtUser().subject
     };
     var src = { "from":"dis", "id":newMsg.id };
-    UpdateTel.run(telClient, TelMsg, src);
+    UpdateTel.run(clients.tel, TelMsg, src);
   };
 }
