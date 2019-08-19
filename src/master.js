@@ -4,7 +4,7 @@ let config = JSON.parse(fs.readFileSync(path.join(__dirname,'../data/config.json
 let chanMap = JSON.parse(fs.readFileSync(path.join(__dirname,'../data/channelMapping.json'), 'utf8'));
 
 const Scpper = require('scpper.js');
-const scpperCn = new Scpper.Scpper({ site: 'cn' });
+const scpClient = new Scpper.Scpper(config.scpconfig);
 
 const Discord = require('discord.js');
 const disClient = new Discord.Client({ autoReconnect: true });
@@ -28,7 +28,7 @@ var clients = {
   dis:disClient,
   tel:telClient,
   qq:cqClient,
-  scp:scpperCn
+  scp:scpClient
 }
 
 // add discord bot to server: discordapp.com/oauth2/authorize?client_id=601680932860067861&scope=bot&permissions=240640
@@ -101,7 +101,7 @@ disClient.on("message", msg => {
   args.shift();
   var cmdFile;
   try {
-    cmdFile = require(`./CmdHandler/${cmd}.js`);
+    cmdFile = require(`./CmdHandler/Discord/${cmd}.js`);
     cmdFile.run(clients, msg, args);
   } catch (e) {
     if (e.code === 'MODULE_NOT_FOUND') {
