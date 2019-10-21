@@ -1,17 +1,17 @@
 const fs = require("fs");
 const path = require('path');
-let config = JSON.parse(fs.readFileSync(path.join(__dirname,'../data/config.json'), 'utf8'));
+const config = require('./lib/CnfgLoader');
 let chanMap = JSON.parse(fs.readFileSync(path.join(__dirname,'../data/channelMapping.json'), 'utf8'));
 
 const Scpper = require('scpper.js');
-const scpClient = new Scpper.Scpper(config.scpconfig);
+const scpClient = new Scpper.Scpper({site: config.SCP_SITE});
 
 const Discord = require('discord.js');
 const disClient = new Discord.Client({ autoReconnect: true });
-disClient.login(config.loginDiscord);
+disClient.login(config.DIS_TOKEN);
 
 const Telegram = require("node-telegram-bot-api");
-const telClient = new Telegram(config.loginTelegram, {polling: true});
+const telClient = new Telegram(config.TEL_TOKEN, {polling: true});
 
 const CQHTTP = require('cqhttp')
 const CQWS = require('cq-websocket');
@@ -23,7 +23,7 @@ var FromQQ = require('./MsgHandler/FromQQ');
 console.log('Posting messages to localhost:7501');
 
 
-var pref = config.prefix.toLowerCase();
+var pref = config.CMD_PREFIX.toLowerCase();
 var clients = {
   dis:disClient,
   tel:telClient,
