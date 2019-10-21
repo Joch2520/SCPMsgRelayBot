@@ -3,6 +3,7 @@ exports.run = (clients, msg) => {
   const path = require("path");
   var ToDis = require('./ToDis.js');
   var ToTel = require('./ToTel.js');
+  const Transcoder = require('./../lib/Transcoder.js');
   let chanMap = JSON.parse(fs.readFileSync(path.join(__dirname, '../../data/channelMapping.json'), 'utf8'));
 
   /*for (var i = 0; i < chanMap.DisGuildID.length; i++) {
@@ -24,7 +25,7 @@ exports.run = (clients, msg) => {
       else if (msg.sender.nickname) { transName += msg.sender.nickname }
     transName += ' (' + msg.sender.user_id + ')';
     transName += '>';
-    var DisMsg = { "targetChan":TargetDisChan, "type":"", "sender":transName, "content":"", "embed":{}, "files":[] };
+    var DisMsg = { "targetChan":TargetDisChan, "type":"", "sender":transName, "content":"", "embed":null, "files":[] };
     var TelMsg = { "chat_id":TargetTelGP, "text":"" };
     for (var i = 0; i < msg.message.length; i++) {
       var curr = msg.message[i];

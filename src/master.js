@@ -81,7 +81,7 @@ telClient.on("message", msg => {
 });
 
 cqClient.on(("message"||"notice"), msg => {
-  if (msg.text.toLowerCase().startsWith(pref)) return;
+  if (msg.message[0].type==="text" && msg.message[0].data.text.toLowerCase().startsWith(pref)) return;
   if (chanMap.QQGPID.includes(msg.group_id.toString(10))) {
     FromQQ.run(clients, msg)
   }
