@@ -3,7 +3,7 @@ exports.run = (clients, TelMsg) => {
   const path = require("path");
   var ToQQ = require('./ToQQ.js');
   var ToDis = require('./ToDis.js');
-  const Transcoder = require('./../lib/Transcoder.js');
+  const util = require('./../lib/util.js');
   let chanMap = JSON.parse(fs.readFileSync(path.join(__dirname, '../../data/channelMapping.json'), 'utf8'));
 
   if (chanMap.TelChatID.includes(TelMsg.chat.id.toString(10))) {
@@ -32,8 +32,8 @@ exports.run = (clients, TelMsg) => {
     var DisMsg = { "targetChan":TargetDisChan, "type":"", "sender":transName, "content":"", "embed":{}, "file":[] };
     var src = { "from":"tel", "id":TelMsg.id };
     QQMsg.message = transName + ': '
-    QQMsg.message += Transcoder.ToQ(DisMsg.content).MsgRepAtUser().subject;
-    //TelMsg.text += Transcoder.ToD(DisMsg.content).MsgRepAtUser().subject;
+    QQMsg.message += util.ToQ(DisMsg.content).MsgRepAtUser().subject;
+    //TelMsg.text += util.ToD(DisMsg.content).MsgRepAtUser().subject;
     //console.log(JSON.stringify(QQMsg));
     //console.log(JSON.stringify(TelMsg));
     if (TargetQQGP) { ToQQ.run(clients.qq, QQMsg, src); }

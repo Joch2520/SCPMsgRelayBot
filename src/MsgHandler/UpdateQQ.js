@@ -1,4 +1,5 @@
 exports.run = (client, deleted, resent, src) => {
+  const path = require("path");
   const SQLite = require('better-sqlite3');
   const MsgMap = new SQLite(path.join(__dirname,'../../data/MsgMappings.sqlite'));
   let DToQMap = MsgMap.prepare("INSERT OR REPLACE INTO FromDis (DisMsgID, QQMsgID) VALUES (@DisMsgID, @QQMsgID);");
