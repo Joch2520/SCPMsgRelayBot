@@ -15,19 +15,19 @@ exports.run = (clients, oldMsg, newMsg) => {
   let QQMsgID = MsgMap.prepare('SELECT QQMsgID FROM FromDis WHERE DisMsgID = ?').get(oldMsg.id);
   let TelMsgID = MsgMap.prepare('SELECT TelMsgID FROM FromDis WHERE DisMsgID = ?').get(oldMsg.id);
 
-  if (QQMsgID) {
+  if (QQMsgID!==undefined&&QQMsgID.QQMsgID) {
     var deleted = {"message_id":QQMsgID.QQMsgID.toString(10)};
     var QQMsg = { "group_id":"", "message":"" }
     QQMsg.group_id = chanMap.QQGPID[chanMap.DisChanID.indexOf(oldMsg.channel.id)];
-    QQMsg.message = '<'+newMsg.member.displayName+'>: '+ util.ToQ(newMsg.content).MsgRepAtUser().subject;
+    QQMsg.message = '<'+newMsg.member.displayName+'>: '+ new util.ToQ(newMsg.content).MsgRepAtUser().subject;
     var src = { "from":"dis", "id":newMsg.id };
     UpdateQQ.run(clients.qq, deleted, QQMsg, src);
   };
-  if (TelMsgID) {
+  if (TelMsgID!==undefined&&TelMsgID.TelMsgID) {
     var TelMsg = {
       "chat_id":chanMap.TelChatID[chanMap.DisChanID.indexOf(oldMsg.channel.id)],
       "message_id":TelMsgID.TelMsgID.toString(10),
-      "text": '<'+newMsg.member.displayName+'>: '+ util.ToT(newMsg.content,clients.tel).MsgRepAtUser().subject
+      "text": '<'+newMsg.member.displayName+'>: '+ new util.ToT(newMsg.content,clients.tel).MsgRepAtUser().subject
     };
     var src = { "from":"dis", "id":newMsg.id };
     UpdateTel.run(clients.tel, TelMsg, src);

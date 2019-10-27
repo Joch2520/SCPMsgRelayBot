@@ -32,8 +32,8 @@ exports.run = (clients, TelMsg) => {
     var DisMsg = { "targetChan":TargetDisChan, "type":"", "sender":transName, "content":"", "embed":{}, "file":[] };
     var src = { "from":"tel", "id":TelMsg.id };
     QQMsg.message = transName + ': '
-    QQMsg.message += util.ToQ(DisMsg.content).MsgRepAtUser().subject;
-    //TelMsg.text += util.ToD(DisMsg.content).MsgRepAtUser().subject;
+    QQMsg.message += new util.ToQ(DisMsg.content).MsgRepAtUser().subject;
+    //TelMsg.text += new util.ToD(DisMsg.content).MsgRepAtUser().subject;
     //console.log(JSON.stringify(QQMsg));
     //console.log(JSON.stringify(TelMsg));
     if (TargetQQGP) { ToQQ.run(clients.qq, QQMsg, src); }

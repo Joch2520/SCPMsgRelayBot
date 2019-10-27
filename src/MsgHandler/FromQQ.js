@@ -35,15 +35,15 @@ exports.run = (clients, msg) => {
         var curr = msg.message[i];
         switch (curr.type) {
           case 'text':
-            DisMsg.content += util.ToD(curr.data.text,clients.dis).MsgRepAtUser().subject;
-            //TelMsg.text += util.ToT(curr.data.text,clients.tel).MsgRepAtUser().subject;
+            DisMsg.content += new util.ToD(curr.data.text,clients.dis).MsgRepAtUser().subject;
+            //TelMsg.text += new util.ToT(curr.data.text,clients.tel).MsgRepAtUser().subject;
             break;
           case 'image':
             DisMsg.content += curr.data.url;
             /*DisMsg.files.push(curr.data.url);*/
             break;
           case 'at': DisMsg.content += '@'+ curr.data.qq + ' '; TelMsg.text += '@'+ curr.data.qq + ' '; break;
-          case 'face': DisMsg.content += 'FaceID:' + curr.data.id + ' '; TelMsg.text += 'FaceID:' + curr.data.id + ' '; break;
+          case 'face': DisMsg.content += new util.ToD(curr.data.id,clients.dis).MsgRepEmj(0).subject; TelMsg.text += 'FaceID:' + curr.data.id + ' '; break;
           case 'emoji': DisMsg.content += 'EmojiID:' + curr.data.id + ' '; TelMsg.text += 'EmojiID:' + curr.data.id + ' '; break;
           case 'music': switch (curr.data.type) {
             /*case 'qq': DisMsg.embed = {

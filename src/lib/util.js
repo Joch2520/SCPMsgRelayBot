@@ -1,9 +1,16 @@
+var EmojiMap = require('./EmojiMap.js')
+
+
 module.exports.ToQ = class ToQTranscoder {
     constructor(subject) {
       if (!(this instanceof ToQTranscoder)) {
         return new ToQTranscoder(subject);
       };
       this.subject = subject;
+    }
+
+    ReplaceAll (fm) {
+      return this.MsgRepAtUser().MsgRepEmj(fm)
     }
 
     MsgRepAtUser() {
@@ -17,8 +24,32 @@ module.exports.ToQ = class ToQTranscoder {
         }
         result += MsgContent[(MsgContent.length-1)];
         this.subject = result;
-      } else {var result = this.subject}
-      return new ToQTranscoder(result);
+      }
+      return this;
+    }
+
+    MsgRepEmj(fm) {
+      var emj = /\<\:.+\:\d+\>/g, result = '';
+      if(emj.test(this.subject)) {
+        var MsgEmoji = this.subject.match(emj);
+        var MsgContent = this.subject.split(emj);
+        if (fm=="d"||fm==1) {var i=1}
+        else if (fm=="t"||fm==3) {var i=3}
+
+        for (var k = 0; k < MsgEmoji.length; k++) {
+          var emjName = MsgEmoji[k].split(":")[1];
+          for (var emjobj of EmojiMap) {
+            if (emjName==emjobj[i]) {
+              result += '' + MsgContent[k] + '[CQ:face,id=' + emjobj[0] + ']';
+            } else {
+              result += '' + MsgContent[k] + '[Emoji:' + emjName + ']';
+            }
+          }
+        }
+        result += MsgContent[(MsgContent.length-1)];
+        this.subject = result;
+      }
+      return this;
     }
 }
 
@@ -36,6 +67,10 @@ module.exports.ToD = class ToDTranscoder {
       }
     }
 
+    ReplaceAll (fm) {
+      return this.MsgRepAtUser().MsgRepAtRole().MsgRepEmj(fm)
+    }
+
     MsgRepAtUser () {
       var client = this.client;
       var AtDU = /At\([^@#]{2,32}\#\d{4}\)/g, CurrUTag, CurrUID, result = '';
@@ -49,8 +84,8 @@ module.exports.ToD = class ToDTranscoder {
         }
         result += MsgContent[(MsgContent.length-1)];
         this.subject = result;
-      } else {var result = this.subject}
-      return new ToDTranscoder(result,client);
+      }
+      return this;
     }
 
     MsgRepAtRole () {
@@ -67,8 +102,21 @@ module.exports.ToD = class ToDTranscoder {
         }
         result += MsgContent[(MsgContent.length-1)];
         this.subject = result;
-      } else {var result = this.subject}
-      return new ToDTranscoder(result,client);
+      }
+      return this;
+    }
+
+    MsgRepEmj(fm) {
+      if (fm=="q"||fm==0) {var i=0}
+      else if (fm=="t"||fm==3) {var i=3}
+      for (var emjobj of EmojiMap) {
+        if (this.subject==emjobj[i]) {
+          this.subject = `<:${emjobj[1]}:${emjobj[2]}>`
+        } else if (this.subject instanceof String && this.subject.includes(emjobj[1])) {
+          this.subject = this.subject.replace(emjobj[i],`<:${emjobj[1]}:${emjobj[2]}>`)
+        }
+      }
+      return this;
     }
 }
 
@@ -86,6 +134,10 @@ module.exports.ToT = class ToTTranscoder {
       }
     }
 
+    ReplaceAll () {
+      return this.MsgRepAtUser()
+    }
+
     MsgRepAtUser () {
       var client = this.client;
       var AtDU = /At\([^@#]{5,32}\)/g, CurrUName, result = '';
@@ -98,8 +150,8 @@ module.exports.ToT = class ToTTranscoder {
         }
         result += MsgContent[(MsgContent.length-1)];
         this.subject = result;
-      } else {var result = this.subject}
-      return new ToTTranscoder(result,client);
+      }
+      return this;
     }
 }
 

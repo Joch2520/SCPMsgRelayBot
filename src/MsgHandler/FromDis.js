@@ -20,8 +20,8 @@ exports.run = (clients, DisMsg) => {
     var src = { "from":"dis", "id":DisMsg.id };
 
     QQMsg.message = TelMsg.text = '<'+DisMsg.member.displayName+' ('+DisMsg.author.tag+')>: ';
-    QQMsg.message += util.ToQ(DisMsg.content).MsgRepAtUser().subject;
-    TelMsg.text += util.ToT(DisMsg.content).MsgRepAtUser().subject;
+    QQMsg.message += new util.ToQ(DisMsg.content).ReplaceAll(1).subject;
+    TelMsg.text += new util.ToT(DisMsg.content).ReplaceAll().subject;
     //console.log(JSON.stringify(QQMsg));
     //console.log(JSON.stringify(TelMsg));
     if (TargetQQGP) { ToQQ.run(clients.qq, QQMsg, src); }

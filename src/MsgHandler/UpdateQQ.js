@@ -5,8 +5,8 @@ exports.run = (client, deleted, resent, src) => {
   let DToQMap = MsgMap.prepare("INSERT OR REPLACE INTO FromDis (DisMsgID, QQMsgID) VALUES (@DisMsgID, @QQMsgID);");
   let TToQMap = MsgMap.prepare("INSERT OR REPLACE INTO FromTel (TelMsgID, QQMsgID) VALUES (@TelMsgID, @QQMsgID);");
 
-  client.qq('delete_msg', deleted).then(
-    client.qq('send_group_msg', resent).then(res=>{
+  client('delete_msg', deleted).then(
+    client('send_group_msg', resent).then(res=>{
       if (src.from.toLowerCase() === "dis") {
         DToQMap.run({DisMsgID:src.id, QQMsgID:res.message_id.toString(10)});
       } else if (src.from.toLowerCase() === "tel") {
