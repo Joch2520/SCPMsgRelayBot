@@ -112,7 +112,7 @@ module.exports.ToD = class ToDTranscoder {
       for (var emjobj of EmojiMap) {
         if (this.subject==emjobj[i]) {
           this.subject = `<:${emjobj[1]}:${emjobj[2]}>`
-        } else if (this.subject instanceof String && this.subject.includes(emjobj[1])) {
+        } else if (this.subject instanceof String && this.subject.includes(emjobj[i])) {
           this.subject = this.subject.replace(emjobj[i],`<:${emjobj[1]}:${emjobj[2]}>`)
         }
       }
