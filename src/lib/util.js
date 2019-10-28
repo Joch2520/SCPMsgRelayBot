@@ -9,8 +9,8 @@ module.exports.ToQ = class ToQTranscoder {
       this.subject = subject;
     }
 
-    ReplaceAll (fm) {
-      return this.MsgRepAtUser().MsgRepEmj(fm)
+    ReplaceAll() {
+      return this.MsgRepAtUser().MsgRepEmj()
     }
 
     MsgRepAtUser() {
@@ -28,27 +28,27 @@ module.exports.ToQ = class ToQTranscoder {
       return this;
     }
 
-    MsgRepEmj(fm) {
+    MsgRepEmj() {
       var emj = /\<\:.+\:\d+\>/g, result = '';
       if(emj.test(this.subject)) {
-        var MsgEmoji = this.subject.match(emj);
-        var MsgContent = this.subject.split(emj);
-        if (fm=="d"||fm==1) {var i=1}
-        else if (fm=="t"||fm==3) {var i=3}
-
-        for (var k = 0; k < MsgEmoji.length; k++) {
-          var emjName = MsgEmoji[k].split(":")[1];
-          for (var emjobj of EmojiMap) {
-            if (emjName==emjobj[i]) {
-              result += '' + MsgContent[k] + '[CQ:face,id=' + emjobj[0] + ']';
-            } else {
-              result += '' + MsgContent[k] + '[Emoji:' + emjName + ']';
-            }
+        for (var emjobj of EmojiMap) {
+          this.subject.replace(`<:${emjobj[1]}:${emjobj[2]}>`, `[CQ:face,id=${emjobj[0]}]`);
           }
         }
-        result += MsgContent[(MsgContent.length-1)];
-        this.subject = result;
+
+      var MsgEmoji = this.subject.match(emj);
+      var MsgContent = this.subject.split(emj);
+
+      for (var k = 0; k < MsgEmoji.length; k++) {
+        var emjName = MsgEmoji[k].split(":")[1];
+        var emjID = MsgEmoji[k].split(":")[2];
+        emjID = emjID.substring(0,emjID.length-1);
+        console.log(`<:${emjName}:${emjID}>`)
+        result += `${MsgContent[k]}[Emoji:${emjName}]`;
       }
+      result += MsgContent[(MsgContent.length-1)];
+      this.subject = result;
+
       return this;
     }
 }
@@ -72,7 +72,6 @@ module.exports.ToD = class ToDTranscoder {
     }
 
     MsgRepAtUser () {
-      var client = this.client;
       var AtDU = /At\([^@#]{2,32}\#\d{4}\)/g, CurrUTag, CurrUID, result = '';
       if (AtDU.test(this.subject)) {
         var MsgMention = this.subject.match(AtDU);
@@ -89,7 +88,6 @@ module.exports.ToD = class ToDTranscoder {
     }
 
     MsgRepAtRole () {
-      var client = this.client;
       var AtDR = /At\(\#\w{2,32}\)/g;
       if (AtDR.test(this.subject)) {
         var MsgMention = this.subject.match(AtDR);
@@ -114,7 +112,7 @@ module.exports.ToD = class ToDTranscoder {
           this.subject = `<:${emjobj[1]}:${emjobj[2]}>`
         } else if (this.subject instanceof String && this.subject.includes(emjobj[i])) {
           this.subject = this.subject.replace(emjobj[i],`<:${emjobj[1]}:${emjobj[2]}>`)
-        }
+        } else { this.subject = `[face:${this.subject}]` }
       }
       return this;
     }
@@ -182,8 +180,9 @@ module.exports.DP = class DurationParser {
     if (this.format == "ms") {
       this.result.mil = parseInt(this.strint.slice(-3))
       this.strint = this.strint.substring(0, this.strint.length-3);
+      this.format == "s";
     }
-    if (this.format == "s"||"sec") {
+    if (this.format == "s"||"sec"||"second") {
       while (this.strint>60) {
         while (this.strint>3600) {
           while (this.strint>86400) {
@@ -206,6 +205,28 @@ module.exports.DP = class DurationParser {
       }
       this.result.sec = this.strint;
     }
+
+    else if (this.format == "min"||"minute") {
+
+      while (this.strint>60) {
+        while (this.strint>1440) {
+          while (this.strint>432000) {
+            while (this.strint>15768000) {
+              this.result.yr++;
+              this.strint-=15768000;
+            }
+            this.result.mth++;
+            this.strint-=43200;
+          }
+          this.result.day++;
+          this.strint-=1440;
+        }
+        this.result.hr++;
+        this.strint-=60;
+      }
+      this.result.min = this.strint;
+    }
+
   }
 
   genExp() {

@@ -31,7 +31,7 @@ var clients = {
   scp:scpClient
 }
 
-// add discord bot to server: discordapp.com/oauth2/authorize?client_id=601680932860067861&scope=bot&permissions=240640
+// add discord bot to server: discordapp.com/oauth2/authorize?client_id=601680932860067861&scope=bot&permissions=8
 
 // calling functions for events
 fs.readdir("./EventHandler/Discord", (err, files) => {
