@@ -32,19 +32,21 @@ module.exports.ToQ = class ToQTranscoder {
       var emj = /\<\:.+\:\d+\>/g, result = '';
       if(emj.test(this.subject)) {
         for (var emjobj of EmojiMap) {
-          this.subject.replace(`<:${emjobj[1]}:${emjobj[2]}>`, `[CQ:face,id=${emjobj[0]}]`);
+          this.subject = this.subject.replace(`<:${emjobj[1]}:${emjobj[2]}>`, `[CQ:face,id=${emjobj[0]}]`);
           }
         }
 
       var MsgEmoji = this.subject.match(emj);
       var MsgContent = this.subject.split(emj);
 
-      for (var k = 0; k < MsgEmoji.length; k++) {
-        var emjName = MsgEmoji[k].split(":")[1];
-        var emjID = MsgEmoji[k].split(":")[2];
-        emjID = emjID.substring(0,emjID.length-1);
-        console.log(`<:${emjName}:${emjID}>`)
-        result += `${MsgContent[k]}[Emoji:${emjName}]`;
+      if (MsgEmoji!==undefined&&MsgEmoji) {
+        for (var k = 0; k < MsgEmoji.length; k++) {
+          var emjName = MsgEmoji[k].split(":")[1];
+          var emjID = MsgEmoji[k].split(":")[2];
+          emjID = emjID.substring(0,emjID.length-1);
+          console.log(`<:${emjName}:${emjID}>`)
+          result += `${MsgContent[k]}[Emoji:${emjName}]`;
+        }
       }
       result += MsgContent[(MsgContent.length-1)];
       this.subject = result;
@@ -107,12 +109,16 @@ module.exports.ToD = class ToDTranscoder {
     MsgRepEmj(fm) {
       if (fm=="q"||fm==0) {var i=0}
       else if (fm=="t"||fm==3) {var i=3}
+      var found = 0;
       for (var emjobj of EmojiMap) {
         if (this.subject==emjobj[i]) {
-          this.subject = `<:${emjobj[1]}:${emjobj[2]}>`
+          this.subject = `<:${emjobj[1]}:${emjobj[2]}>`;
+          found += 1;
         } else if (this.subject instanceof String && this.subject.includes(emjobj[i])) {
-          this.subject = this.subject.replace(emjobj[i],`<:${emjobj[1]}:${emjobj[2]}>`)
-        } else { this.subject = `[face:${this.subject}]` }
+          this.subject = this.subject.replace(emjobj[i],`<:${emjobj[1]}:${emjobj[2]}>`);
+          found += 1;
+        }
+        if (!found) { this.subject = `[face:${this.subject}]` }
       }
       return this;
     }
