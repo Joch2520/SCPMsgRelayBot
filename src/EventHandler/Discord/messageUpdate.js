@@ -6,7 +6,7 @@ exports.run = (clients, oldMsg, newMsg) => {
   var UpdateQQ = require(path.join(__dirname,'../../MsgHandler/UpdateQQ.js'));
   var UpdateTel = require(path.join(__dirname,'../../MsgHandler/UpdateTel.js'));
   const MsgMap = new SQLite(path.join(__dirname,'../../../data/MsgMappings.sqlite'));
-  let chanMap = JSON.parse(fs.readFileSync(path.join(__dirname, '../../../data/channelMapping.json'), 'utf8'));
+  let chanMap = clients.cmap;
 
   MsgMap.pragma("synchronous = 1");
   MsgMap.pragma("journal_mode = wal");
@@ -18,14 +18,14 @@ exports.run = (clients, oldMsg, newMsg) => {
   if (QQMsgID!==undefined&&QQMsgID.QQMsgID) {
     var deleted = {"message_id":QQMsgID.QQMsgID.toString(10)};
     var QQMsg = { "group_id":"", "message":"" }
-    QQMsg.group_id = chanMap.QQGPID[chanMap.DisChanID.indexOf(oldMsg.channel.id)];
+    QQMsg.group_id = chanMap.QQ_GPID[chanMap.DIS_CID.indexOf(oldMsg.channel.id)];
     QQMsg.message = '<'+newMsg.member.displayName+'>: '+ new util.ToQ(newMsg.content).MsgRepAtUser().subject;
     var src = { "from":"dis", "id":newMsg.id };
     UpdateQQ.run(clients.qq, deleted, QQMsg, src);
   };
   if (TelMsgID!==undefined&&TelMsgID.TelMsgID) {
     var TelMsg = {
-      "chat_id":chanMap.TelChatID[chanMap.DisChanID.indexOf(oldMsg.channel.id)],
+      "chat_id":chanMap.TEL_CID[chanMap.DIS_CID.indexOf(oldMsg.channel.id)],
       "message_id":TelMsgID.TelMsgID.toString(10),
       "text": '<'+newMsg.member.displayName+'>: '+ new util.ToT(newMsg.content,clients.tel).MsgRepAtUser().subject
     };

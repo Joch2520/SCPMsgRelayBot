@@ -4,14 +4,14 @@ exports.run = (clients, DisMsg) => {
   var ToQQ = require('./ToQQ.js');
   var ToTel = require('./ToTel.js');
   const util = require('./../lib/util.js');
-  let chanMap = JSON.parse(fs.readFileSync(path.join(__dirname, '../../data/channelMapping.json'), 'utf8'));
+  let chanMap = clients.cmap;
 
-  if (chanMap.DisChanID.includes(DisMsg.channel.id)) {
-    if (chanMap.QQGPID[chanMap.DisChanID.indexOf(DisMsg.channel.id)]) {
-      var TargetQQGP = parseInt(chanMap.QQGPID[chanMap.DisChanID.indexOf(DisMsg.channel.id)]);
+  if (chanMap.DIS_CID.includes(DisMsg.channel.id)) {
+    if (chanMap.QQ_GPID[chanMap.DIS_CID.indexOf(DisMsg.channel.id)]) {
+      var TargetQQGP = parseInt(chanMap.QQ_GPID[chanMap.DIS_CID.indexOf(DisMsg.channel.id)]);
     } else {var TargetQQGP = null};
-    if (chanMap.TelChatID[chanMap.DisChanID.indexOf(DisMsg.channel.id)]) {
-      var TargetTelGP = chanMap.TelChatID[chanMap.DisChanID.indexOf(DisMsg.channel.id)];
+    if (chanMap.TEL_CID[chanMap.DIS_CID.indexOf(DisMsg.channel.id)]) {
+      var TargetTelGP = chanMap.TEL_CID[chanMap.DIS_CID.indexOf(DisMsg.channel.id)];
     } else {var TargetTelGP = null};
 
 

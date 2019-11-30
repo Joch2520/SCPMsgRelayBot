@@ -1,7 +1,9 @@
-/node_modules/
-/data/
-/CoolQ */temp/
-/CoolQ */conf/
-/CoolQ */data/app/*/log/
-/CoolQ */data/
+node_modules/
+data/
+/CoolQ*/
 config.json
+/Docker/runCmd.txt
+heroku.yml
+mrb.env
+Dockerfile
+docker-compose.yml

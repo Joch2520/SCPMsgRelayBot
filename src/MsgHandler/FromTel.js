@@ -4,14 +4,14 @@ exports.run = (clients, TelMsg) => {
   var ToQQ = require('./ToQQ.js');
   var ToDis = require('./ToDis.js');
   const util = require('./../lib/util.js');
-  let chanMap = JSON.parse(fs.readFileSync(path.join(__dirname, '../../data/channelMapping.json'), 'utf8'));
+  let chanMap = clients.cmap;
 
-  if (chanMap.TelChatID.includes(TelMsg.chat.id.toString(10))) {
-    if (chanMap.QQGPID[chanMap.TelChatID.indexOf(TelMsg.chat.id.toString(10))]) {
-      var TargetQQGP = parseInt(chanMap.QQGPID[chanMap.TelChatID.indexOf(TelMsg.chat.id.toString(10))]);
+  if (chanMap.TEL_CID.includes(TelMsg.chat.id.toString(10))) {
+    if (chanMap.QQ_GPID[chanMap.TEL_CID.indexOf(TelMsg.chat.id.toString(10))]) {
+      var TargetQQGP = parseInt(chanMap.QQ_GPID[chanMap.TEL_CID.indexOf(TelMsg.chat.id.toString(10))]);
     } else {var TargetQQGP = null};
-    if (chanMap.DisChanID[chanMap.TelChatID.indexOf(TelMsg.chat.id.toString(10))]) {
-      var TargetDisChan = chanMap.DisChanID[chanMap.TelChatID.indexOf(TelMsg.chat.id.toString(10))];
+    if (chanMap.DIS_CID[chanMap.TEL_CID.indexOf(TelMsg.chat.id.toString(10))]) {
+      var TargetDisChan = chanMap.DIS_CID[chanMap.TEL_CID.indexOf(TelMsg.chat.id.toString(10))];
     } else {var TargetDisChan = null};
 
     var transName = '<'+TelMsg.from.first_name;

@@ -5,19 +5,19 @@ exports.run = (clients, msg) => {
   var ToTel = require('./ToTel.js');
   const util = require('./../lib/util.js');
   var QQ = clients.qq;
-  let chanMap = JSON.parse(fs.readFileSync(path.join(__dirname, '../../data/channelMapping.json'), 'utf8'));
+  let chanMap = clients.cmap;
 
-  /*for (var i = 0; i < chanMap.DisGuildID.length; i++) {
-    clients.dis.guilds.get(chanMap.DisGuildID[i]).fetchMembers();
+  /*for (var i = 0; i < chanMap.DIS_GID.length; i++) {
+    clients.dis.guilds.get(chanMap.DIS_GID[i]).fetchMembers();
   }*/
 
 
-  if ((msg.message_type === 'group') && (chanMap.QQGPID.includes(msg.group_id.toString(10)))) {
-    if (chanMap.DisChanID[chanMap.QQGPID.indexOf(msg.group_id.toString(10))]) {
-      var TargetDisChan = clients.dis.channels.get(chanMap.DisChanID[chanMap.QQGPID.indexOf(msg.group_id.toString(10))]);
+  if ((msg.message_type === 'group') && (chanMap.QQ_GPID.includes(msg.group_id.toString(10)))) {
+    if (chanMap.DIS_CID[chanMap.QQ_GPID.indexOf(msg.group_id.toString(10))]) {
+      var TargetDisChan = clients.dis.channels.get(chanMap.DIS_CID[chanMap.QQ_GPID.indexOf(msg.group_id.toString(10))]);
     } else {var TargetDisChan = null};
-    if (chanMap.TelChatID[chanMap.QQGPID.indexOf(msg.group_id.toString(10))]) {
-      var TargetTelGP = chanMap.TelChatID[chanMap.QQGPID.indexOf(msg.group_id.toString(10))];
+    if (chanMap.TEL_CID[chanMap.QQ_GPID.indexOf(msg.group_id.toString(10))]) {
+      var TargetTelGP = chanMap.TEL_CID[chanMap.QQ_GPID.indexOf(msg.group_id.toString(10))];
     } else {var TargetTelGP = null};
     var src = { "from":"qq", "id":msg.message_id, "targetChan":TargetDisChan };
 
@@ -95,25 +95,25 @@ exports.run = (clients, msg) => {
         switch (context.notice_type) {
           case 'group_increase':
             var username = user.nickname || '新人';
-            DisMsg.content = TelMsg.text += `[ Q - ${username} 已加入群聊。 ]`
+            DisMsg.content = TelMsg.text += `< Q - ${username} 已加入群聊。 >`
             break;
           case 'group_decrease':
             if (operator!==null&&operator) {
-              var leave =  ` 被 ${operator.nickname} 移除。 ]`
-            } else { var leave = " 已離開群聊。 ]"}
-            DisMsg.content = TelMsg.text += "[ Q - " + user.nickname + leave;
+              var leave =  ` 被 ${operator.nickname} 移除。 >`
+            } else { var leave = " 已離開群聊。 >"}
+            DisMsg.content = TelMsg.text += "< Q - " + user.nickname + leave;
             break;
           case 'group_admin':
             if (context.sub_type === "set") { context.sub_type = `委任` }
             else if (context.sub_type === "unset") { context.sub_type = `移除` }
-            DisMsg.content = TelMsg.text += `[ Q - ${user.nickname} 被${context.sub_type}管理。]`
+            DisMsg.content = TelMsg.text += `< Q - ${user.nickname} 被${context.sub_type}管理。>`
             break;
           case 'group_ban':
             if (context.sub_type==="ban") {
               var time = util.DP(context.duration, "s").chiExp;
-              var ban = ` 被 ${operator.nickname} 禁言 ${time}。 ]`;
-            } else { var ban = " 被解除禁言。 ]"}
-            DisMsg.content = TelMsg.text += "[ Q - " + user.nickname + ban;
+              var ban = ` 被 ${operator.nickname} 禁言 ${time}。 >`;
+            } else { var ban = " 被解除禁言。 >"}
+            DisMsg.content = TelMsg.text += "< Q - " + user.nickname + ban;
             break;
           default: break;
 

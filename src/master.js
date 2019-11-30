@@ -1,7 +1,6 @@
 const fs = require("fs");
-const path = require('path');
 const config = require('./lib/CnfgLoader');
-let chanMap = JSON.parse(fs.readFileSync(path.join(__dirname,'../data/channelMapping.json'), 'utf8'));
+let chanMap = require('./lib/ChanMapLoader');
 
 const Scpper = require('scpper.js');
 const scpClient = new Scpper.Scpper({site: config.SCP_SITE});
@@ -25,6 +24,7 @@ console.log('Posting messages to localhost:7501');
 
 var pref = config.CMD_PREFIX.toLowerCase();
 var clients = {
+  cmap:chanMap,
   dis:disClient,
   tel:telClient,
   qq:cqClient,
@@ -65,8 +65,8 @@ disClient.on('message', msg => {
   if (msg.author.bot) return;
   if (msg.content.toLowerCase().startsWith(pref)) return;
   //if (msg.system) return;
-  for (var i in chanMap.DisGuildID) {
-    if ((chanMap.DisGuildID[i] === msg.guild.id)&&(chanMap.DisChanID[i] === msg.channel.id)) {
+  for (var i in chanMap.DIS_GID) {
+    if ((chanMap.DIS_GID[i] === msg.guild.id)&&(chanMap.DIS_CID[i] === msg.channel.id)) {
       FromDis.run(clients, msg)
     }
   }
@@ -75,14 +75,14 @@ disClient.on('message', msg => {
 telClient.on("message", msg => {
   if (msg.from.is_bot) return;
   if (msg.text.toLowerCase().startsWith(pref)) return;
-  if (chanMap.TelChatID.includes(msg.chat.id.toString(10))) {
+  if (chanMap.TEL_CID.includes(msg.chat.id.toString(10))) {
     FromTel.run(clients, msg)
   }
 });
 
 cqClient.on(("message"||"notice"), msg => {
   if (msg.message[0].type==="text" && msg.message[0].data.text.toLowerCase().startsWith(pref)) return;
-  if (chanMap.QQGPID.includes(msg.group_id.toString(10))) {
+  if (chanMap.QQ_GPID.includes(msg.group_id.toString(10))) {
     FromQQ.run(clients, msg)
   }
 });

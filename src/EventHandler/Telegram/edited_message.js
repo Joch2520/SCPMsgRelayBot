@@ -1,12 +1,12 @@
-exports.run = (disClient, telClient, newMsg) => {
+exports.run = (clients, newMsg) => {
   const fs = require("fs");
   const path = require("path");
   const SQLite = require('better-sqlite3');
-  var Transcoder = require(path.join(__dirname,'../../lib/Transcoder.js'));
+  var util = require(path.join(__dirname,'../../lib/util.js'));
   var UpdateQQ = require(path.join(__dirname,'../../MsgHandler/UpdateQQ.js'));
   var UpdateDis = require(path.join(__dirname,'../../MsgHandler/UpdateDis.js'));
   const MsgMap = new SQLite(path.join(__dirname,'../../../data/MsgMappings.sqlite'));
-  let chanMap = JSON.parse(fs.readFileSync(path.join(__dirname, '../../../data/channelMapping.json'), 'utf8'));
+  let chanMap = clients.cmap;
 
   MsgMap.pragma("synchronous = 1");
   MsgMap.pragma("journal_mode = wal");
@@ -32,21 +32,21 @@ exports.run = (disClient, telClient, newMsg) => {
   if (QQMsgID) {
     var deleted = {"message_id":QQMsgID.QQMsgID.toString(10)};
     var QQMsg = { "group_id":"", "message":"" }
-    QQMsg.group_id = parseInt(chanMap.QQGPID[chanMap.TelChatID.indexOf(newMsg.chat.id.toString(10))]);
-    QQMsg.message = transName +': '+ Transcoder.ToQ(newMsg.content).MsgRepAtUser().subject;
+    QQMsg.group_id = parseInt(chanMap.QQ_GPID[chanMap.TEL_CID.indexOf(newMsg.chat.id.toString(10))]);
+    QQMsg.message = transName +': '+ util.ToQ(newMsg.content).MsgRepAtUser().subject;
     var MsgHandler = { "from":"tel", "id":newMsg.message_id };
-    UpdateQQ.run(deleted, QQMsg, MsgHandler);
+    UpdateQQ.run(clients.qq, deleted, QQMsg, MsgHandler);
   };
   if (DisMsgID) {
     var DisMsg = {
       "msg_id": DisMsgID.DisMsgID,
-      "targetChan": chanMap.DisChanID[chanMap.TelChatID.indexOf(newMsg.chat.id.toString(10))],
+      "targetChan": chanMap.DIS_CID[chanMap.TEL_CID.indexOf(newMsg.chat.id.toString(10))],
       "type": "",
       "sender": transName,
       "content": newMsg.text,
       "embed": {}
     };
     var MsgHandler = { "from":"tel", "id":newMsg.message_id };
-    UpdateDis.run(disClient, DisMsg, MsgHandler);
+    UpdateDis.run(clients.dis, DisMsg, MsgHandler);
   };
 }
