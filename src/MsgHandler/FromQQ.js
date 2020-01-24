@@ -6,7 +6,7 @@ exports.run = async (clients, msg) => {
   const util = require('./../lib/util.js');
   var QQ = clients.qq;
   let chanMap = clients.cmap;
-  var voice = clients.v;
+  //var voice = clients.v;
 
   /*for (var i = 0; i < chanMap.DIS_GID.length; i++) {
     clients.dis.guilds.get(chanMap.DIS_GID[i]).fetchMembers();
@@ -74,9 +74,9 @@ exports.run = async (clients, msg) => {
             thumbnail: { url: curr.data.image }
           }; break;
           case 'rich': DisMsg.embed = curr.data; break;
-          case 'record': await voice.decode(`./../CoolQ Air/data/record/${curr.data.file}`, `${curr.data.file.split(".")[0]}.mp3`, {format:"mp3", channels:2}, (file) => {
+          /*case 'record': await voice.decode(`./../CoolQ Air/data/record/${curr.data.file}`, `${curr.data.file.split(".")[0]}.mp3`, {format:"mp3", channels:2}, (file) => {
             DisMsg.files.push({attachment: file, name: `${curr.data.file.split(".")[0]}.mp3`
-          });}); break;
+          });}); break;*/
           default: DisMsg.content += JSON.stringify(curr) + ' '; break;
         }
       }
@@ -126,7 +126,7 @@ exports.run = async (clients, msg) => {
       });
     } else return;
 
-    if (DisMsg.embed) { DisMsg.type = "embed" } else { DisMsg.type = "normal" }    
+    if (DisMsg.embed) { DisMsg.type = "embed" } else { DisMsg.type = "normal" }
     if (TargetDisChan) { ToDis.run(clients.dis, DisMsg, src); }
     if (TargetTelGP) { ToTel.run(clients.tel, TelMsg, src); }
   };
