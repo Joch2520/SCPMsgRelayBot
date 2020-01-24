@@ -109,16 +109,10 @@ module.exports.ToD = class ToDTranscoder {
     MsgRepEmj(fm) {
       if (fm=="q"||fm==0) {var i=0}
       else if (fm=="t"||fm==3) {var i=3}
-      var found = 0;
-      for (var emjobj of EmojiMap) {
-        if (this.subject==emjobj[i]) {
-          this.subject = `<:${emjobj[1]}:${emjobj[2]}>`;
-          found += 1;
-        } else if (this.subject instanceof String && this.subject.includes(emjobj[i])) {
-          this.subject = this.subject.replace(emjobj[i],`<:${emjobj[1]}:${emjobj[2]}>`);
-          found += 1;
-        }
-        if (!found) { this.subject = `[face:${this.subject}]` }
+      var found = EmojiMap.filter(emj=>{this.subject==emj[i]})
+      if (found.length) {
+        emjobj = found[0];
+        this.subject = `<:${emjobj[1]}:${emjobj[2]}>`;
       }
       return this;
     }

@@ -11,6 +11,7 @@
   "author": "GitHub: Joch2520 (Discord: Joch#6879) (QQ: 2502425837) (Telegram: @Zokhoi)",
   "license": "ISC",
   "dependencies": {
+    "axios": ">=0.18.1",
     "better-sqlite3": "^5.4.3",
     "cq-websocket": "^2.0.2",
     "cqhttp": "^1.1.1",
@@ -20,6 +21,6 @@
     "node-telegram-bot-api": "^0.30.0",
     "request": "^2.88.0",
     "scpper.js": "^3.0.3",
-    "axios": ">=0.18.1"
+    "wx-voice": "^0.2.1"
   }
 }

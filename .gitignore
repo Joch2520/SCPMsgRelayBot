@@ -7,3 +7,5 @@ heroku.yml
 mrb.env
 Dockerfile
 docker-compose.yml
+temp/
+ffmpeg-4.2.1/

@@ -16,6 +16,9 @@ const CQHTTP = require('cqhttp')
 const CQWS = require('cq-websocket');
 const cqClient = new CQHTTP(config.cqconfig.httpapi);
 
+const WxVoice = require('wx-voice');
+var voice = new WxVoice('./../temp/', './lib/ffmpeg-4.2.1');
+
 var FromDis = require('./MsgHandler/FromDis');
 var FromTel = require('./MsgHandler/FromTel');
 var FromQQ = require('./MsgHandler/FromQQ');
@@ -28,7 +31,8 @@ var clients = {
   dis:disClient,
   tel:telClient,
   qq:cqClient,
-  scp:scpClient
+  scp:scpClient,
+  v: voice
 }
 
 // add discord bot to server: discordapp.com/oauth2/authorize?client_id=601680932860067861&scope=bot&permissions=8
@@ -82,7 +86,7 @@ telClient.on("message", msg => {
 
 cqClient.on(("message"||"notice"), msg => {
   if (msg.message[0].type==="text" && msg.message[0].data.text.toLowerCase().startsWith(pref)) return;
-  if (chanMap.QQ_GPID.includes(msg.group_id.toString(10))) {
+  if (msg.group_id!=undefined&&chanMap.QQ_GPID.includes(msg.group_id.toString(10))) {
     FromQQ.run(clients, msg)
   }
 });
