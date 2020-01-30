@@ -27,6 +27,7 @@ console.log('Posting messages to localhost:7501');
 
 var pref = config.CMD_PREFIX.toLowerCase();
 var clients = {
+  config: config,
   cmap:chanMap,
   dis:disClient,
   tel:telClient,
@@ -92,7 +93,6 @@ cqClient.on("message", msg => {
 });
 
 cqClient.on("notice", msg => {
-  if (msg.message[0].type==="text" && msg.message[0].data.text.toLowerCase().startsWith(pref)) return;
   if (msg.group_id!=undefined&&chanMap.QQ_GPID.includes(msg.group_id.toString(10))) {
     FromQQ.run(clients, msg)
   }

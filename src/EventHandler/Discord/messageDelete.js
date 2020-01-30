@@ -1,10 +1,8 @@
 exports.run = (clients, msg) => {
-  const fs = require("fs");
   const path = require("path");
-  const request = require('request');
   const SQLite = require('better-sqlite3');
   const MsgMap = new SQLite(path.join(__dirname,'../../../data/MsgMappings.sqlite'));
-  let pref = JSON.parse(fs.readFileSync(path.join(__dirname,'../../../data/config.json'), 'utf8')).prefix.toLowerCase();
+  let pref = clients.config.CMD_PREFIX.toLowerCase();
   var QQ = clients.qq;
 
   if (msg.content.toLowerCase().startsWith(pref)) return;

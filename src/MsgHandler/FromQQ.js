@@ -1,6 +1,4 @@
 exports.run = async (clients, msg) => {
-  const fs = require("fs");
-  const path = require("path");
   var ToDis = require('./ToDis.js');
   var ToTel = require('./ToTel.js');
   const util = require('./../lib/util.js');
@@ -83,20 +81,20 @@ exports.run = async (clients, msg) => {
     }
     else if (msg.post_type === 'notice') {
       var user = QQ('get_group_member_info', {
-          group_id: context.group_id,
-          user_id: context.user_id
+          group_id: msg.group_id,
+          user_id: msg.user_id
       });
-      if (context.operator_id !== undefined && context.operator_id) {
+      if (msg.operator_id !== undefined && msg.operator_id!==msg.user_id) {
         var operator = QQ('get_group_member_info', {
-            group_id: context.group_id,
-            user_id: context.operator_id
+            group_id: msg.group_id,
+            user_id: msg.operator_id
         })
       } else { var operator = null };
       var DisMsg = { "targetChan":TargetDisChan, "type":"notice", "content": ""};
       var TelMsg = { "chat_id":TargetTelGP, "text":"" };
-      Promise.all([user,operator]).then(result => {
+      await Promise.all([user,operator]).then(result => {
         user = result[0]; operator = result[1];
-        switch (context.notice_type) {
+        switch (msg.notice_type) {
           case 'group_increase':
             var username = user.nickname || '新人';
             DisMsg.content = TelMsg.text += `< Q - ${username} 已加入群聊。 >`
@@ -108,13 +106,13 @@ exports.run = async (clients, msg) => {
             DisMsg.content = TelMsg.text += "< Q - " + user.nickname + leave;
             break;
           case 'group_admin':
-            if (context.sub_type === "set") { context.sub_type = `委任` }
-            else if (context.sub_type === "unset") { context.sub_type = `移除` }
-            DisMsg.content = TelMsg.text += `< Q - ${user.nickname} 被${context.sub_type}管理。>`
+            if (msg.sub_type === "set") { msg.sub_type = `委任` }
+            else if (msg.sub_type === "unset") { msg.sub_type = `移除` }
+            DisMsg.content = TelMsg.text += `< Q - ${user.nickname} 被${msg.sub_type}管理。>`
             break;
           case 'group_ban':
-            if (context.sub_type==="ban") {
-              var time = util.DP(context.duration, "s").chiExp;
+            if (msg.sub_type==="ban") {
+              var time = util.DP(msg.duration, "s").chiExp;
               var ban = ` 被 ${operator.nickname} 禁言 ${time}。 >`;
             } else { var ban = " 被解除禁言。 >"}
             DisMsg.content = TelMsg.text += "< Q - " + user.nickname + ban;

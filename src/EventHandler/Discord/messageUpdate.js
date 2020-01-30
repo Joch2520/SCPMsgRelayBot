@@ -1,5 +1,4 @@
 exports.run = (clients, oldMsg, newMsg) => {
-  const fs = require("fs");
   const path = require("path");
   const SQLite = require('better-sqlite3');
   var util = require(path.join(__dirname,'../../lib/util.js'));
