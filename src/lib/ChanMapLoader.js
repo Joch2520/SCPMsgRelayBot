@@ -8,7 +8,7 @@ var cmap = {
 
 const fs = require("fs");
 const path = require('path');
-let custom = JSON.parse(fs.readFileSync(path.join(__dirname,'../../data/channelMapping.json'), 'utf8'));
+let custom = JSON.parse(fs.readFileSync(path.join(__dirname,'../data/channelMapping.json'), 'utf8'));
 
 cmapvars = ["CHAN_NAME", "DIS_GID", "DIS_CID", "QQ_GPID", "TEL_CID"];
 for (name of cmapvars) { if (custom[name] !== undefined && custom[name]) {cmap[name] = custom[name]} };

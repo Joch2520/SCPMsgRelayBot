@@ -4,7 +4,7 @@ exports.run = (clients, oldMsg, newMsg) => {
   var util = require(path.join(__dirname,'../../lib/util.js'));
   var UpdateQQ = require(path.join(__dirname,'../../MsgHandler/UpdateQQ.js'));
   var UpdateTel = require(path.join(__dirname,'../../MsgHandler/UpdateTel.js'));
-  const MsgMap = new SQLite(path.join(__dirname,'../../../data/MsgMappings.sqlite'));
+  const MsgMap = new SQLite(path.join(__dirname,'../../data/MsgMappings.sqlite'));
   let chanMap = clients.cmap;
 
   MsgMap.pragma("synchronous = 1");

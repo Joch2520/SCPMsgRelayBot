@@ -5,14 +5,15 @@
   "main": "master.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "cd src && node master.js"
+    "start": "cd src && node master.js",
+    "dockerstart": "cd mrb && cd src && node master.js"
   },
   "keywords": [],
-  "author": "GitHub: Joch2520 (Discord: Joch#6879) (QQ: 2502425837) (Telegram: @Zokhoi)",
+  "author": "GitHub: Joch2520 (Discord: Joch#6879) (QQ: 2502425837)",
   "license": "ISC",
   "dependencies": {
     "axios": ">=0.18.1",
-    "better-sqlite3": "^5.4.3",
+    "better-sqlite3": "^6.0.1",
     "cq-websocket": "^2.0.2",
     "cqhttp": "^1.1.1",
     "discord.js": "^11.5.1",

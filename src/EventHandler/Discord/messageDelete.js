@@ -1,7 +1,7 @@
 exports.run = (clients, msg) => {
   const path = require("path");
   const SQLite = require('better-sqlite3');
-  const MsgMap = new SQLite(path.join(__dirname,'../../../data/MsgMappings.sqlite'));
+  const MsgMap = new SQLite(path.join(__dirname,'../../data/MsgMappings.sqlite'));
   let pref = clients.config.CMD_PREFIX.toLowerCase();
   var QQ = clients.qq;
 
