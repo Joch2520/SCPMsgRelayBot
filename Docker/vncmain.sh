@@ -1,8 +1,7 @@
 #!/bin/bash
-set -m
 # Set them to empty is NOT SECURE but avoid them display in random logs.
 export VNC_PASSWD=''
-export USER_PASSWD=''
+# export USER_PASSWD=''
 
 export TERM=linux
 export LC_CTYPE=zh_CN.UTF-8
@@ -12,10 +11,10 @@ cqexe=$(basename $(find ~/coolq -maxdepth 1 -type f -name '*.exe' | head -n 1))
 mrbjs='~/mrb/src/master.js'
 
 while true; do
-    echo "[MRBDaemon] Starting MessageRelayBot ...."
+    echo $USER_PASSWD | sudo echo "[MRBDaemon] Starting MessageRelayBot ...."
     cd ~/mrb/src
-    node master.js &
-    echo "[MRBDaemon] Started MessageRelayBot ."
+    sudo node master.js &
+    echo "[MRBDaemon] Started MessageRelayBot."
     wait $!
     echo "[MRBDaemon] MessageRelayBot exited."
     echo "[MRBDaemon] Searching for the new process ..."
