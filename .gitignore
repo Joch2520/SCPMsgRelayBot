@@ -1,5 +1,6 @@
 node_modules/
 data/
+extras/
 /CoolQ*/
 config.json
 /Docker/runCmd.txt
