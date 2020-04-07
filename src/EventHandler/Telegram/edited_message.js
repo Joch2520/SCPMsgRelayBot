@@ -1,4 +1,4 @@
-exports.run = (clients, newMsg) => {
+exports.run = (clients, newMsg) => { /*
   const fs = require("fs");
   const path = require("path");
   const SQLite = require('better-sqlite3');
@@ -48,5 +48,5 @@ exports.run = (clients, newMsg) => {
     };
     var MsgHandler = { "from":"tel", "id":newMsg.message_id };
     UpdateDis.run(clients.dis, DisMsg, MsgHandler);
-  };
+  }; */
 }

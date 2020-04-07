@@ -11,10 +11,13 @@ var config = {
 }
 const fs = require("fs");
 const path = require('path');
-let custom = JSON.parse(fs.readFileSync(path.join(__dirname,'../../data/config.json'), 'utf8'));
-
-confignames = ["CMD_PREFIX", "DIS_TOKEN", "TEL_TOKEN", "SCP_SITE"];
-for (name of confignames) { if (custom[name] !== undefined && custom[name]) {config[name] = custom[name]} };
+try {
+	let custom = JSON.parse(fs.readFileSync(path.join(__dirname,'../../data/config.json'), 'utf8'));
+	confignames = ["CMD_PREFIX", "DIS_TOKEN", "TEL_TOKEN", "SCP_SITE"];
+	for (name of confignames) { if (custom[name] !== undefined && custom[name]) {config[name] = custom[name]} };
+} catch (e) { if (['MODULE_NOT_FOUND','ENOENT'].includes(e.code)) {
+	console.log("No config JSON file found. Loading environment variables as config...")
+} }
 
 if (process.env.MRB_FORCE_ENV === undefined || process.env.MRB_FORCE_ENV.toLowerCase === "true") {
   if (process.env.MRB_CMD_PREFIX!==undefined && process.env.MRB_CMD_PREFIX) { config.CMD_PREFIX = process.env.MRB_CMD_PREFIX };

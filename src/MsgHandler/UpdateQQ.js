@@ -1,4 +1,4 @@
-exports.run = (client, deleted, resent, src) => {
+exports.run = (client, deleted, resent, src) => {/*
   const path = require("path");
   const SQLite = require('better-sqlite3');
   const MsgMap = new SQLite(path.join(__dirname,'../../data/MsgMappings.sqlite'));
@@ -13,5 +13,5 @@ exports.run = (client, deleted, resent, src) => {
         TToQMap.run({TelMsgID:src.id.toString(10), QQMsgID:res.message_id.toString(10)});
       }
     })
-  ).catch(e=>{console.log(e)})
+  ).catch(e=>{console.log(e)})*/
 }

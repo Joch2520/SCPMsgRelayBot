@@ -13,7 +13,7 @@ const Telegram = require("node-telegram-bot-api");
 const telClient = new Telegram(config.TEL_TOKEN, {polling: true});
 
 const CQHTTP = require('cqhttp')
-const CQWS = require('cq-websocket');
+//const CQWS = require('cq-websocket');
 const cqClient = new CQHTTP(config.cqconfig.httpapi);
 
 //const WxVoice = require('wx-voice');
@@ -120,3 +120,24 @@ disClient.on("message", msg => {
     } else { console.log(e); }
   };
 });
+
+cqClient.on("message", msg => {
+  if (!(msg.message[0].type==="text" && msg.message[0].data.text.toLowerCase().startsWith(pref))) return;
+  let args = msg.message[0].data.text.toLowerCase().slice(pref.length).split(' ');
+  for (var i=0; i<args.length; i++) {
+    if (args[i]==='') { args.splice(i,1); i--};
+  };
+  let cmd = args[0].toLowerCase();
+  args.shift();
+  var cmdFile;
+  try {
+    cmdFile = require(`./CmdHandler/QQ/${cmd}.js`);
+    cmdFile.run(clients, msg, args);
+  } catch (e) {
+    if (e.code === 'MODULE_NOT_FOUND') {
+      cqClient('send_group_msg', {"group_id":msg.group_id,"message":`指令不存在。使用\""+pref+"help\"尋找更多資料。\nInvalid command. See \""+pref+"help\" for more information.`});
+    } else { console.log(e); }
+  };
+});
+
+setInterval(cqClient, 86400000, 'clean_data_dir', {"data_dir":"image"})

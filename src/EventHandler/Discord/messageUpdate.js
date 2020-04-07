@@ -1,4 +1,4 @@
-exports.run = (clients, oldMsg, newMsg) => {
+exports.run = (clients, oldMsg, newMsg) => { /*
   const path = require("path");
   const SQLite = require('better-sqlite3');
   var util = require(path.join(__dirname,'../../lib/util.js'));
@@ -30,5 +30,5 @@ exports.run = (clients, oldMsg, newMsg) => {
     };
     var src = { "from":"dis", "id":newMsg.id };
     UpdateTel.run(clients.tel, TelMsg, src);
-  };
+  }; */
 }

@@ -4,9 +4,8 @@ extras/
 /CoolQ*/
 config.json
 /Docker/runCmd.txt
-heroku.yml
-mrb.env
+*.env
 Dockerfile
-docker-compose.yml
+*.yml
 temp/
 ffmpeg-4.2.1/

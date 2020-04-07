@@ -1,4 +1,4 @@
-exports.run = (clients, msg) => {
+exports.run = (clients, msg) => { /*
   const path = require("path");
   const SQLite = require('better-sqlite3');
   const MsgMap = new SQLite(path.join(__dirname,'../../data/MsgMappings.sqlite'));
@@ -13,5 +13,5 @@ exports.run = (clients, msg) => {
     {
       MsgMap.prepare('DELETE FROM FromDis WHERE DisMsgID = ?').run(msg.id);
     }
-  }
+  } */
 }
