@@ -19,7 +19,7 @@ exports.run = (clients, DisMsg) => {
     var TelMsg = { "chat_id":TargetTelGP, "text":"" };
     var src = { "from":"dis", "id":DisMsg.id };
 
-    QQMsg.message = TelMsg.text = '<'+DisMsg.member.displayName+' ('+DisMsg.author.tag+')>: ';
+    QQMsg.message = TelMsg.text = '['+DisMsg.member.displayName+' ('+DisMsg.author.tag+')]: ';
     QQMsg.message += new util.ToQ(DisMsg.content).ReplaceAll().subject;
     TelMsg.text += new util.ToT(DisMsg.content).ReplaceAll().subject;
     //console.log(JSON.stringify(QQMsg));

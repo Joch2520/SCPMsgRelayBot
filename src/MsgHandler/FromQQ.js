@@ -22,12 +22,12 @@ exports.run = async (clients, msg) => {
   	if (msg.message_type == 'group') {
 
   		if (msg.post_type == 'message' && msg.sub_type == 'normal') {
-  		  var transName = '<';
-  		  if (msg.sender.title) { transName += '['+msg.sender.title+']'}
+  		  var transName = '[';
+  		  if (msg.sender.title) { transName += '<'+msg.sender.title+'>'}
   		  if (msg.sender.card) { transName += msg.sender.card }
   			else if (msg.sender.nickname) { transName += msg.sender.nickname }
   		  transName += ' (' + msg.sender.user_id + ')';
-  		  transName += '>';
+  		  transName += ']';
   		  var DisMsg = { "targetChan":TargetDisChan, "type":"", "sender":transName, "content":"", "embed":null, "files":[] };
   		  var TelMsg = { "chat_id":TargetTelGP, "text":"" };
   		  for (var i = 0; i < msg.message.length; i++) {
@@ -78,11 +78,40 @@ exports.run = async (clients, msg) => {
       				thumbnail: { url: curr.data.image }
     			  }; break;
   			  case 'rich':
-            var context = curr.data.text.split(" ")
-            DisMsg.embed = {
-              title: context.shift(),
-              footer: { text: context.pop() },
-              description: context.join(" ")
+            if (curr.data.content&&curr.data.content!=undefined) {
+              var det = JSON.parse(curr.data.content)
+              if (det.detail_1&&det.detail_1!=undefined) {
+                DisMsg.embed = {
+                  color: 0x99FF00,
+        				  author: {
+                    name: det.detail_1.title,
+                    icon: `https://${det.detail_1.icon}`
+                  },
+                  title: det.detail_1.desc,
+          				thumbnail: { url: `https://${det.detail_1.preview}` },
+                  footer: { text: curr.data.title },
+                  url: `https://${det.detail_1.url}`
+                }
+              } else if (det.music&&det.music!=undefined) {
+                DisMsg.embed = {
+        				  color: 0xFF9900,
+                  author: {
+                    name: det.music.desc,
+                    icon: det.music.source_icon
+                  },
+                  title: det.music.title,
+          				thumbnail: { url: det.music.preview },
+                  footer: { text: det.music.tag },
+                  url: det.music.musicUrl
+        				}
+              } else console.log(curr.data)
+            } else {
+              var context = curr.data.text.split(" ")
+              DisMsg.embed = {
+                title: context.shift(),
+                footer: { text: context.pop() },
+                description: context.join(" ")
+              }
             }; break;
   			  /*case 'record': await voice.decode(`./../CoolQ Air/data/record/${curr.data.file}`, `${curr.data.file.split(".")[0]}.mp3`, {format:"mp3", channels:2}, (file) => {
   				DisMsg.files.push({attachment: file, name: `${curr.data.file.split(".")[0]}.mp3`
@@ -107,25 +136,25 @@ exports.run = async (clients, msg) => {
   	  switch (msg.notice_type) {
   		  case 'group_increase':
   			var username = user.nickname || '新人';
-  			DisMsg.content = `< QQ: ${username}(${user.user_id}) 已加入群聊 >`
+  			DisMsg.content = `< QQ: ${username} (${user.user_id}) 已加入群聊 >`
   			break;
   		  case 'group_decrease':
   			if (operator) {
-  			  var leave =  ` 被 ${operator.nickname}${operator.user_id} 移除 >`
+  			  var leave =  ` 被 ${operator.nickname} ${operator.user_id} 移除 >`
   			} else { var leave = " 已離開群聊 >"}
-  			DisMsg.content = `< QQ: ${user.nickname}(${user.user_id})${leave}`;
+  			DisMsg.content = `< QQ: ${user.nickname} (${user.user_id})${leave}`;
   			break;
   		  case 'group_admin':
   			if (msg.sub_type=="set") { msg.sub_type = `委任` }
   			else if (msg.sub_type=="unset") { msg.sub_type = `移除` }
-  			DisMsg.content = `< QQ: ${user.nickname}(${user.user_id}) 被${msg.sub_type}管理 >`
+  			DisMsg.content = `< QQ: ${user.nickname} (${user.user_id}) 被${msg.sub_type}管理 >`
   			break;
   		  case 'group_ban':
   			if (msg.sub_type=="ban") {
   			  var time = new util.DP(msg.duration, "s").chiExp;
-  			  var ban = ` 被 ${operator.nickname}${operator.user_id} 禁言 ${time} >`;
+  			  var ban = ` 被 ${operator.nickname} ${operator.user_id} 禁言 ${time} >`;
   			} else { var ban = " 被解除禁言 >"}
-  			DisMsg.content = `< QQ: ${user.nickname}(${user.user_id})${ban}`;
+  			DisMsg.content = `< QQ: ${user.nickname} (${user.user_id})${ban}`;
   			break;
   		  default: break;
   	  }
