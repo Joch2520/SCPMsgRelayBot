@@ -32,7 +32,7 @@ module.exports.ToQ = class ToQTranscoder {
       var emj = /\<\:.+\:\d+\>/g, result = '';
       if(emj.test(this.subject)) {
         for (var emjobj of EmojiMap) {
-          this.subject = this.subject.replace(`<:${emjobj[1]}:${emjobj[2]}>`, `[CQ:face,id=${emjobj[0]}]`);
+          this.subject = this.subject.replace(new RegExp(`<:${emjobj[1]}:${emjobj[2]}>`,'g'), `[CQ:face,id=${emjobj[0]}]`);
           }
         }
 
@@ -109,9 +109,9 @@ module.exports.ToD = class ToDTranscoder {
     MsgRepEmj(fm) {
       if (fm=="q"||fm==0) {var i=0}
       else if (fm=="t"||fm==3) {var i=3}
-      var found = EmojiMap.filter(emj=>{this.subject==emj[i]})
+      var found = EmojiMap.filter(emj=>(this.subject==emj[i]))
       if (found.length) {
-        emjobj = found[0];
+        var emjobj = found[0];
         this.subject = `<:${emjobj[1]}:${emjobj[2]}>`;
       }
       return this;
