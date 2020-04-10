@@ -10,14 +10,14 @@ exports.run = async (clients, msg) => {
     clients.dis.guilds.get(chanMap.DIS_GID[i]).fetchMembers();
   }*/
 
-
+  var TargetDisChan = null, TargetTelGP = null, DisMsg = {"type":""};
   if (chanMap.QQ_GPID.includes(msg.group_id.toString(10))) {
     if (chanMap.DIS_CID[chanMap.QQ_GPID.indexOf(msg.group_id.toString(10))]) {
 		  var TargetDisChan = clients.dis.channels.get(chanMap.DIS_CID[chanMap.QQ_GPID.indexOf(msg.group_id.toString(10))]);
-		} else {var TargetDisChan = null};
+		}
 		if (chanMap.TEL_CID[chanMap.QQ_GPID.indexOf(msg.group_id.toString(10))]) {
 		  var TargetTelGP = chanMap.TEL_CID[chanMap.QQ_GPID.indexOf(msg.group_id.toString(10))];
-		} else {var TargetTelGP = null};
+		}
 		var src = { "from":"qq", "id":msg.message_id, "targetChan":TargetDisChan };
   	if (msg.message_type == 'group') {
 
@@ -34,6 +34,7 @@ exports.run = async (clients, msg) => {
   			var curr = msg.message[i];
   			switch (curr.type) {
   			  case 'text':
+          if (curr.data.text.includes(clients.config.NO_RELAY)) return;
   				DisMsg.content += new util.ToD(curr.data.text,clients.dis).MsgRepAtUser().subject;
   				//TelMsg.text += new util.ToT(curr.data.text,clients.tel).MsgRepAtUser().subject;
   				break;
@@ -104,8 +105,25 @@ exports.run = async (clients, msg) => {
                   footer: { text: det.music.tag },
                   url: det.music.musicUrl
         				}
+              } else if (det.news&&det.news!=undefined) {
+                DisMsg.embed = {
+        				  color: 0xFF9900,
+                  author: {
+                    name: det.news.tag
+                  },
+                  title: det.news.title,
+                  description: det.news.desc,
+          				thumbnail: { url: det.news.preview },
+                  footer: { text: curr.data.title },
+                  url: det.news.jumpUrl
+        				}
               } else console.log(curr.data)
-            } else {
+            } else if (curr.data.title!=undefined) {
+              DisMsg.embed = {
+                footer: { text: curr.data.title },
+                description: curr.data.content
+              }
+            } else if (curr.data.text!=undefined) {
               var context = curr.data.text.split(" ")
               DisMsg.embed = {
                 title: context.shift(),
@@ -135,27 +153,27 @@ exports.run = async (clients, msg) => {
   	  var TelMsg = { "chat_id":TargetTelGP, "text":"" };
   	  switch (msg.notice_type) {
   		  case 'group_increase':
-  			var username = user.nickname || '新人';
-  			DisMsg.content = `< QQ: ${username} (${user.user_id}) 已加入群聊 >`
-  			break;
+    			var username = user.nickname || '新人';
+    			DisMsg.content = `< QQ: ${username} (${user.user_id}) 已加入群聊 >`
+    			break;
   		  case 'group_decrease':
-  			if (operator) {
-  			  var leave =  ` 被 ${operator.nickname} ${operator.user_id} 移除 >`
-  			} else { var leave = " 已離開群聊 >"}
-  			DisMsg.content = `< QQ: ${user.nickname} (${user.user_id})${leave}`;
-  			break;
+    			if (msg.sub_type=="kick") { var leave =  ` 被 ${operator.nickname} (${operator.user_id})移除 >` }
+          else if (msg.sub_type=="leave") { var leave = " 已離開群聊 >"}
+          else { var leave = ` 被 ${operator.nickname} (${operator.user_id})移除，中繼器無法正常服務。 >`}
+    			DisMsg.content = `< QQ: ${user.nickname} (${user.user_id})${leave}`;
+    			break;
   		  case 'group_admin':
-  			if (msg.sub_type=="set") { msg.sub_type = `委任` }
-  			else if (msg.sub_type=="unset") { msg.sub_type = `移除` }
-  			DisMsg.content = `< QQ: ${user.nickname} (${user.user_id}) 被${msg.sub_type}管理 >`
-  			break;
+    			if (msg.sub_type=="set") { msg.sub_type = `委任` }
+    			else if (msg.sub_type=="unset") { msg.sub_type = `移除` }
+    			DisMsg.content = `< QQ: ${user.nickname} (${user.user_id}) 被${msg.sub_type}管理 >`
+    			break;
   		  case 'group_ban':
-  			if (msg.sub_type=="ban") {
-  			  var time = new util.DP(msg.duration, "s").chiExp;
-  			  var ban = ` 被 ${operator.nickname} ${operator.user_id} 禁言 ${time} >`;
-  			} else { var ban = " 被解除禁言 >"}
-  			DisMsg.content = `< QQ: ${user.nickname} (${user.user_id})${ban}`;
-  			break;
+    			if (msg.sub_type=="ban") {
+    			  var time = new util.DP(msg.duration, "s").chiExp;
+    			  var ban = ` 被 ${operator.nickname} (${operator.user_id}) 禁言${time} >`;
+    			} else { var ban = " 被解除禁言 >"}
+    			DisMsg.content = `< QQ: ${user.nickname} (${user.user_id})${ban}`;
+    			break;
   		  default: break;
   	  }
   	} else return;

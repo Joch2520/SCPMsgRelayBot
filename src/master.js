@@ -69,6 +69,7 @@ fs.readdir("./EventHandler/QQ", (err, files) => {
 disClient.on('message', msg => {
   if (msg.author.bot) return;
   if (msg.content.toLowerCase().startsWith(pref)) return;
+  if (msg.content.toLowerCase().includes(config.NO_RELAY)) return;
   //if (msg.system) return;
   for (var i in chanMap.DIS_GID) {
     if ((chanMap.DIS_GID[i] === msg.guild.id)&&(chanMap.DIS_CID[i] === msg.channel.id)) {
@@ -88,13 +89,13 @@ telClient.on("message", msg => {
 cqClient.on("message", msg => {
   if (msg.message[0].type==="text" && msg.message[0].data.text.toLowerCase().startsWith(pref)) return;
   if (msg.group_id!=undefined&&chanMap.QQ_GPID.includes(msg.group_id.toString(10))) {
-    FromQQ.run(clients, msg)
+    FromQQ.run(clients, msg).catch(e=>{console.log(e)})
   }
 });
 
 cqClient.on("notice", msg => {
   if (msg.group_id!=undefined&&chanMap.QQ_GPID.includes(msg.group_id.toString(10))) {
-    FromQQ.run(clients, msg)
+    FromQQ.run(clients, msg).catch(e=>{console.log(e)})
   }
 });
 
