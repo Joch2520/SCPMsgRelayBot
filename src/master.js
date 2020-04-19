@@ -6,15 +6,15 @@ const Scpper = require('scpper.js');
 const scpClient = new Scpper.Scpper({site: config.SCP_SITE});
 
 const Discord = require('discord.js');
-const disClient = new Discord.Client({ autoReconnect: true });
+var disClient = new Discord.Client({ autoReconnect: true });
 disClient.login(config.DIS_TOKEN);
 
 const Telegram = require("node-telegram-bot-api");
-const telClient = new Telegram(config.TEL_TOKEN, {polling: true});
+var telClient = new Telegram(config.TEL_TOKEN, {polling: true});
 
 const CQHTTP = require('cqhttp')
 //const CQWS = require('cq-websocket');
-const cqClient = new CQHTTP(config.cqconfig.httpapi);
+var cqClient = new CQHTTP(config.cqconfig.httpapi);
 
 //const WxVoice = require('wx-voice');
 //var voice = new WxVoice('./../temp/', './lib/ffmpeg-4.2.1');
@@ -39,35 +39,24 @@ var clients = {
 // add discord bot to server: discordapp.com/oauth2/authorize?client_id=601680932860067861&scope=bot&permissions=8
 
 // calling functions for events
-fs.readdir("./EventHandler/Discord", (err, files) => {
-  if(err) return console.error(err);
-  files.forEach(file => {
-    let eventFunction = require(`./EventHandler/Discord/${file}`);
-    let eventName = file.split(".")[0];
-    disClient.on(eventName, (...args) => eventFunction.run(clients, ...args));
+function getEvents(fol, cli) {
+  fs.readdir(`./EventHandler/${fol}`, (err, files) => {
+    if(err) return console.error(err);
+    files.forEach(file => {
+      let eventFunction = require(`./EventHandler/${fol}/${file}`);
+      let eventName = file.split(".")[0];
+      cli.on(eventName, (...args) => eventFunction.run(clients, ...args));
+    });
   });
-});
-fs.readdir("./EventHandler/Telegram", (err, files) => {
-  if(err) return console.error(err);
-  files.forEach(file => {
-    let eventFunction = require(`./EventHandler/Telegram/${file}`);
-    let eventName = file.split(".")[0];
-    telClient.on(eventName, (...args) => eventFunction.run(clients, ...args));
-  });
-});
-fs.readdir("./EventHandler/QQ", (err, files) => {
-  if(err) return console.error(err);
-  files.forEach(file => {
-    let eventFunction = require(`./EventHandler/QQ/${file}`);
-    let eventName = file.split(".")[0];
-    cqClient.on(eventName, (...args) => eventFunction.run(clients, ...args));
-  });
-});
+}
+getEvents("Discord",disClient);
+getEvents("QQ",cqClient);
+getEvents("Telegram",telClient);
 
 
 //these triggers message relay
 disClient.on('message', msg => {
-  if (msg.author.bot) return;
+  if (msg.author.bot&&msg.author.id!='268478587651358721') return;
   if (msg.content.toLowerCase().startsWith(pref)) return;
   if (msg.content.toLowerCase().includes(config.NO_RELAY)) return;
   //if (msg.system) return;
@@ -102,6 +91,24 @@ cqClient.on("notice", msg => {
 
 
 //responds to commands
+function readcmd(fol,cli) {
+  cli.cmds = new Map();
+  fs.readdir(`./CmdHandler/${fol}`, (err, files) => {
+    if(err) console.log(err);
+    let jsfile = files.filter(f => f.split(".").pop() === "js"
+      && !["disabled.js"].includes(f.split("-").pop()))
+    if(!jsfile.length) return console.log("No commands available.");
+
+    jsfile.forEach((f, i) =>{
+      let props = require(`./CmdHandler/${fol}/${f}`);
+      console.log(`${f} loaded.`);
+      cli.cmds.set(f.split(".").shift(), props);
+    });
+  });
+}
+readcmd("Discord",disClient);
+readcmd("QQ",cqClient);
+
 disClient.on("message", msg => {
   if (msg.author.bot) return;
   if (!msg.content.toLowerCase().startsWith(pref)) return;
@@ -109,17 +116,13 @@ disClient.on("message", msg => {
   for (var i=0; i<args.length; i++) {
     if (args[i]==='') { args.splice(i,1); i--};
   };
-  let cmd = args[0].toLowerCase();
-  args.shift();
-  var cmdFile;
-  try {
-    cmdFile = require(`./CmdHandler/Discord/${cmd}.js`);
+  let cmd = args.shift().toLowerCase();
+  var cmdFile = disClient.cmds.get(cmd);
+  if (cmdFile&&cmdFile!=undefined) {
     cmdFile.run(clients, msg, args);
-  } catch (e) {
-    if (e.code === 'MODULE_NOT_FOUND') {
-      msg.channel.send("指令不存在。使用\""+pref+"help\"尋找更多資料。\nInvalid command. See \""+pref+"help\" for more information.");
-    } else { console.log(e); }
-  };
+  } else {
+    msg.channel.send("指令不存在。使用\""+pref+"help\"尋找更多資料。\nInvalid command. See \""+pref+"help\" for more information.");
+  }
 });
 
 cqClient.on("message", msg => {
@@ -128,16 +131,12 @@ cqClient.on("message", msg => {
   for (var i=0; i<args.length; i++) {
     if (args[i]==='') { args.splice(i,1); i--};
   };
-  let cmd = args[0].toLowerCase();
-  args.shift();
-  var cmdFile;
-  try {
-    cmdFile = require(`./CmdHandler/QQ/${cmd}.js`);
+  let cmd = args.shift().toLowerCase();
+  var cmdFile = cqClient.cmds.get(cmd);
+  if (cmdFile&&cmdFile!=undefined) {
     cmdFile.run(clients, msg, args);
-  } catch (e) {
-    if (e.code === 'MODULE_NOT_FOUND') {
-      cqClient('send_group_msg', {"group_id":msg.group_id,"message":`指令不存在。使用\""+pref+"help\"尋找更多資料。\nInvalid command. See \""+pref+"help\" for more information.`});
-    } else { console.log(e); }
+  } else {
+    cqClient('send_group_msg', {"group_id":msg.group_id,"message":`指令不存在。使用\""+pref+"help\"尋找更多資料。\nInvalid command. See \""+pref+"help\" for more information.`});
   };
 });
 

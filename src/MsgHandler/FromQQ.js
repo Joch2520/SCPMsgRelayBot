@@ -158,8 +158,8 @@ exports.run = async (clients, msg) => {
     			break;
   		  case 'group_decrease':
     			if (msg.sub_type=="kick") { var leave =  ` 被 ${operator.nickname} (${operator.user_id})移除 >` }
-          else if (msg.sub_type=="leave") { var leave = " 已離開群聊 >"}
-          else { var leave = ` 被 ${operator.nickname} (${operator.user_id})移除，中繼器無法正常服務。 >`}
+          else if (msg.sub_type=="kick_me") { var leave = ` 被 ${operator.nickname} (${operator.user_id})移除，中繼器無法正常服務。 >` }
+          else { console.log(msg); var leave = " 已離開群聊 >" }
     			DisMsg.content = `< QQ: ${user.nickname} (${user.user_id})${leave}`;
     			break;
   		  case 'group_admin':

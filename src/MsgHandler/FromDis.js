@@ -1,6 +1,4 @@
 exports.run = (clients, DisMsg) => {
-  const fs = require("fs");
-  const path = require("path");
   var ToQQ = require('./ToQQ.js');
   var ToTel = require('./ToTel.js');
   const util = require('./../lib/util.js');
@@ -20,7 +18,7 @@ exports.run = (clients, DisMsg) => {
     var src = { "from":"dis", "id":DisMsg.id };
 
     QQMsg.message = TelMsg.text = '['+DisMsg.member.displayName+' ('+DisMsg.author.tag+')]: ';
-    QQMsg.message += new util.ToQ(DisMsg.content).ReplaceAll().subject;
+    QQMsg.message += new util.ToQ(DisMsg).ReplaceAll().subject;
     TelMsg.text += new util.ToT(DisMsg.content).ReplaceAll().subject;
     //console.log(JSON.stringify(QQMsg));
     //console.log(JSON.stringify(TelMsg));

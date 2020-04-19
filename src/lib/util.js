@@ -2,15 +2,26 @@ var EmojiMap = require('./EmojiMap.js')
 
 
 module.exports.ToQ = class ToQTranscoder {
-    constructor(subject) {
+    constructor(msg) {
       if (!(this instanceof ToQTranscoder)) {
-        return new ToQTranscoder(subject);
+        return new ToQTranscoder(msg);
       };
-      this.subject = subject;
+      this.msg = msg;
+      this.subject = msg.content;
     }
 
     ReplaceAll() {
-      return this.MsgRepAtUser().MsgRepEmj()
+      return this.MsgRepAtDU().MsgRepAtUser().MsgRepEmj()
+    }
+
+    MsgRepAtDU() {
+      if (/<@!?[0-9]+>/g.test(this.subject)) {
+        this.subject.match(/<@!?[0-9]+>/g).forEach(elem => {
+          var nick = this.msg.mentions.users.get(elem.substring(elem[2]=='!'?3:2,elem.length-1)).tag;
+          this.subject = this.subject.replace(elem,` @${nick} `)
+        });
+      }
+      return this;
     }
 
     MsgRepAtUser() {
@@ -156,23 +167,26 @@ module.exports.ToT = class ToTTranscoder {
 module.exports.DP = class DurationParser {
   constructor(duration, format) {
     this.dur = Number(duration);
-    this.durstr = toString(duration);
+    this.durstr = ""+duration;
     this.strint = null;
     this.strdec = null;
-    this.format = format || "ms";
+    this.format = format;
+    this.valid = true;
     this.exp = {
       "en": "", "cn": ""
     }
     this.result = {
-      "yr":0, "mth":0, "day":0, "hr":0, "min":0, "sec":0, "mil":0
+      "yr":0, "mth":0, "day":0, "hr":0, "min":0, "sec":0, "ms":0
     }
-    if (isNaN(this.dur)) {throw new Error("Duration has to be a number.")}
+    if (isNaN(this.dur)) {this.dur=0}
     if (this.durstr.includes(".")) {
       this.strint = this.durstr.split(".")[0];
       this.strdec = this.durstr.split(".")[1];
     } else this.strint = this.durstr;
 
     this.parse();
+    this.check();
+    this.normalize();
     this.genExp();
   }
 
@@ -320,7 +334,7 @@ module.exports.DP = class DurationParser {
   }
 
   genExp() {
-    var units = ["yr", "mth", "day", "hr", "min", "sec", "mil"]
+    var units = ["yr", "mth", "day", "hr", "min", "sec", "ms"]
     var enU = ["Year", "Month", "Day", "Hour", "Minute", "Second", "Milisecond"]
     var cnU = ["年", "月", "日", "時", "分", "秒", "毫秒"]
     for (var unit of units) {
@@ -334,6 +348,14 @@ module.exports.DP = class DurationParser {
         this.exp.cn += ` ${curr} ${cnU[i]}`
       }
     }
+  }
+
+  toMS() {
+    var ms = this.result.ms;
+    if (this.result.sec) { ms+= this.result.sec*1000; }
+    if (this.result.min) { ms+= this.result.min*60000; }
+    if (this.result.hr) { ms+= this.result.hr*3600000; }
+    return ms;
   }
 
   get chiExp() { return this.exp.cn }
