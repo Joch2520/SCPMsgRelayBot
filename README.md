@@ -1,9 +1,11 @@
 # SCP Discord <-> QQ <-> Telegram Message Relay Bot
-Relies on Node.js, Discord.js, node-telegram-bot-api, cqhttp, better-sqlite3, CoolQ, scpper.js and various other things.
+
+IN PROGRESS: Migration to Mirai
+
 Basically relays message between specified Discord channels, QQ groups and Telegram groups to enable cross-platform chat.
+
 Also provides in-chat function for getting data from ScpperDB.
 
 Todo list:
 ------
-* Reply to message
-* Discord->QQ pics
+* [ ] Rewrite for migration to Mirai
